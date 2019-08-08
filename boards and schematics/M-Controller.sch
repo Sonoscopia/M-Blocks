@@ -490,20 +490,20 @@ DIN A4, landscape with location and doc. field</description>
 <sheets>
 <sheet>
 <plain>
-<text x="175.26" y="30.48" size="1.778" layer="94">Timer0 (8-bit) pins 5 &amp; 6
+<text x="175.26" y="38.1" size="1.778" layer="94">Timer0 (8-bit) pins 5 &amp; 6
 Timer1 (16-bit) pins 9 &amp; 10 
 Timer2 (8-bit) pins 11 &amp; 3 </text>
-<wire x1="172.72" y1="40.64" x2="205.74" y2="40.64" width="0.1524" layer="94"/>
-<wire x1="205.74" y1="40.64" x2="205.74" y2="27.94" width="0.1524" layer="94"/>
-<wire x1="205.74" y1="27.94" x2="172.72" y2="27.94" width="0.1524" layer="94"/>
-<wire x1="172.72" y1="27.94" x2="172.72" y2="40.64" width="0.1524" layer="94"/>
-<text x="172.72" y="41.148" size="1.778" layer="94">WATCH OUT</text>
-<text x="210.82" y="35.56" size="1.778" layer="94">AN0 to AN3 is PortC 0 to 3</text>
-<wire x1="208.28" y1="40.64" x2="241.3" y2="40.64" width="0.1524" layer="94"/>
-<wire x1="241.3" y1="40.64" x2="241.3" y2="27.94" width="0.1524" layer="94"/>
-<wire x1="241.3" y1="27.94" x2="208.28" y2="27.94" width="0.1524" layer="94"/>
-<wire x1="208.28" y1="27.94" x2="208.28" y2="40.64" width="0.1524" layer="94"/>
-<text x="208.28" y="41.402" size="1.778" layer="94">Analog Port</text>
+<wire x1="172.72" y1="48.26" x2="205.74" y2="48.26" width="0.1524" layer="94"/>
+<wire x1="205.74" y1="48.26" x2="205.74" y2="35.56" width="0.1524" layer="94"/>
+<wire x1="205.74" y1="35.56" x2="172.72" y2="35.56" width="0.1524" layer="94"/>
+<wire x1="172.72" y1="35.56" x2="172.72" y2="48.26" width="0.1524" layer="94"/>
+<text x="172.72" y="48.768" size="1.778" layer="94">WATCH OUT</text>
+<text x="210.82" y="43.18" size="1.778" layer="94">AN0 to AN3 is PortC 0 to 3</text>
+<wire x1="208.28" y1="48.26" x2="241.3" y2="48.26" width="0.1524" layer="94"/>
+<wire x1="241.3" y1="48.26" x2="241.3" y2="35.56" width="0.1524" layer="94"/>
+<wire x1="241.3" y1="35.56" x2="208.28" y2="35.56" width="0.1524" layer="94"/>
+<wire x1="208.28" y1="35.56" x2="208.28" y2="48.26" width="0.1524" layer="94"/>
+<text x="208.28" y="49.022" size="1.778" layer="94">Analog Port</text>
 </plain>
 <instances>
 <instance part="U$1" gate="G$1" x="208.28" y="78.74"/>
