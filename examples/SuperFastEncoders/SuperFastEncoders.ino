@@ -7,18 +7,16 @@
  */
 
 #include <Rotary.h>
-//#include <UTFT.h> 
+
 
 // Rotary encoder is wired with the common to ground and the two
 // outputs to pins 2 and 3.
-#define PIN1 6
-#define PIN2 7
+#define PIN1 2
+#define PIN2 3
 Rotary rotary = Rotary(PIN1, PIN2);
 
 // Counter that will beincremented or decremented by rotation.
 volatile int counter = 0;
-
-//UTFT myGLCD(CTE32HR,38,39,40,41);
 
 void setup() {
   Serial.begin(57600);
@@ -28,13 +26,10 @@ void setup() {
   Serial.println(digitalPinToInterrupt(PIN1));
   Serial.print("interrupt pin2: ");
   Serial.println(digitalPinToInterrupt(PIN2));
-  //myGLCD.InitLCD();
-  //myGLCD.clrScr();
 }
 
 void loop() {
-  //myGLCD.setColor(random(255), random(255), random(255));
-  //myGLCD.fillRect(120, 120, 240, 240);
+ 
 }
 
 // rotate is called anytime the rotary inputs change state.
