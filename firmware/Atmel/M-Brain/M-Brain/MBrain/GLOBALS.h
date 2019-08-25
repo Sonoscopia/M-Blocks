@@ -31,6 +31,7 @@
 #define PIN2 3 // rotary pins
 #define MIDICH 1 // MIDI channel
 
+#define PLAYMODE 0x1F // 31: play mode
 #define NMAP 0x1E // note map button code
 #define VMAP 0x1D// velocity map button code
 #define CCMAP 0x1C// cc map button code (= note+velocity buttons)

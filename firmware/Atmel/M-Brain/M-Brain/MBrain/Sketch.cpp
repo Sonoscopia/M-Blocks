@@ -16,6 +16,9 @@
  *  Author: Tiago Ângelo (aka p1nh0)
 */
 
+#pragma GCC push_options
+#pragma GCC optimize (OPTIMIZATION)
+
 // Libraries
 #include <Wire.h>
 #include <EEPROM.h>
@@ -23,9 +26,6 @@
 #include <Rotary.h>
 // My headers and classes 
 #include "GLOBALS.h"
-
-#pragma GCC push_options
-#pragma GCC optimize (OPTIMIZATION)
 
 //Beginning of Auto generated function prototypes by Atmel Studio
 void receiveI2C(int howmany);
@@ -40,7 +40,7 @@ volatile byte counter = 0;
 
 byte toggle[4] = {0, 0, 0, 0}; // values received from M-Toggle
 byte mtoggle[4] = {0, 0, 0, 0}; // values stored in M-Brain to check for changes
-boolean received = false; 
+volatile boolean received = false; 
 
 // Arrays stored in EEPROM presets
 byte notemap[128];
@@ -71,6 +71,8 @@ void setup() {
   DDRF = 0b01111111; // analog A0 to A6 as outputs (leds)
   DDRC = 0b11100000; // set pins 37 to 33 as inputs (buttons)
   PORTC = 0b00011111; // enable input pullup on pins 37 to 33
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
   
   // RESET PRESET MEMORY (see GLOBALS)
   if(RESETMACHINEDATA){
@@ -92,7 +94,7 @@ void setup() {
 }
 
 
-void loop() {
+/*void loop() {
   if (DEBUG && mode != PINC){
     Serial.print("MODE: ");
     Serial.println(PINC, BIN);
@@ -102,7 +104,9 @@ void loop() {
   switch(PINC){
     case NMAP: // NOTE MAP MODE
     counter = 0;
-    while(received && PINC != ENTER){
+    //while(received && PINC != ENTER){
+	while(PINC == NMAP){
+		digitalWrite(LED_BUILTIN, HIGH);
       noteoffset = -1; 
       for (byte i = 0; i < 4; i++){ // check which button has changed
         if (mtoggle[i] != toggle[i]){
@@ -126,6 +130,7 @@ void loop() {
       EEPROM.write(noteoffset, counter);  
     }
     // reset
+	digitalWrite(LED_BUILTIN, LOW);
     received = false;
     counter = 0;  
     PORTF = counter; // light leds
@@ -162,18 +167,82 @@ void loop() {
     PORTF = counter; // light leds
     break;
     
-     
+    
     default: // PLAY MODE
-    for (byte i = 0; i < 4; i++){
-      if(mtoggle[i] != toggle[i]){
-        mtoggle[i] = toggle[i];
-        if(toggle[i]>0)   MIDI.sendNoteOn(notemap[i], velmap[i], MIDICH);
-        else              MIDI.sendNoteOff(notemap[i], 0, MIDICH);
-      }
-    }
+		while(received){
+			for (byte i = 0; i < 4; i++){
+			  if(mtoggle[i] != toggle[i]){
+				mtoggle[i] = toggle[i];
+				if(toggle[i]>0)   MIDI.sendNoteOn(notemap[i], velmap[i], MIDICH);
+				else              MIDI.sendNoteOff(notemap[i], 0, MIDICH);
+			  }
+			}
+			received = false;
+		}
     break;
+
   }
   
+}*/
+
+void loop(){
+	switch(PINC){
+		/* ############## NOTE MAP ###############################################*/
+		case NMAP:
+			counter = 0;
+			noteoffset = -1; 
+			digitalWrite(LED_BUILTIN, HIGH);
+			while(PINC == NMAP){
+				for(int i = 0; i < 4; i++){
+					if(mtoggle[i] != toggle[i]) noteoffset = i;
+				}
+			}
+			if(noteoffset>-1) counter = EEPROM.read(noteoffset);
+			while(PINC != ENTER){
+				if (noteoffset > -1){
+					notemap[noteoffset] = counter;
+					PORTF = counter; // light leds
+					EEPROM.write(noteoffset, counter); 
+				}
+			}
+			mtoggle[noteoffset] = toggle[noteoffset]; // update
+			digitalWrite(LED_BUILTIN, LOW);
+			PORTF = 0x00; // turn leds off
+		break;
+		
+		/* ############## VEL MAP ################################################*/
+		case VMAP:
+		counter = 0; //reset counter
+		veloffset = -1;
+		digitalWrite(LED_BUILTIN, HIGH);
+		while(PINC == VMAP){
+			for(int i = 0; i < 4; i++){
+				if(mtoggle[i] != toggle[i]) veloffset = i;
+			}
+		}
+		if(veloffset>-1) counter = EEPROM.read(VELOFFSET+veloffset); // update counter
+		while(PINC != ENTER){
+			if (veloffset > -1){
+				velmap[veloffset] = counter;
+				PORTF = counter; // light leds
+				EEPROM.write(VELOFFSET+veloffset, counter);
+			}
+		}
+		mtoggle[veloffset] = toggle[veloffset]; // update
+		digitalWrite(LED_BUILTIN, LOW);
+		PORTF = 0x00; // turn leds off
+		break;
+		/* ############## PLAY MODE ##############################################*/
+		default:
+		for (byte i = 0; i < 4; i++){
+			if(mtoggle[i] != toggle[i]){
+				mtoggle[i] = toggle[i]; // update
+				if(toggle[i]>0)   MIDI.sendNoteOn(notemap[i], velmap[i], MIDICH);
+				else              MIDI.sendNoteOff(notemap[i], 0, MIDICH);
+			}
+		}
+		break;
+	}
 }
 
 void receiveI2C(int howmany){
@@ -182,20 +251,8 @@ void receiveI2C(int howmany){
 		byte v = Wire.read();
 		toggle[index] = v;
 		index++;
-		if(DEBUG) Serial.print(v);
-		if(DEBUG) Serial.print(" ");
 	}
-	received = true;
-	// print line when no more bytes are available
-	if(DEBUG && !Wire.available()){
-		Serial.println();
-		Serial.print("toggle: ");
-		for(int i = 0; i < 4; i++){
-			Serial.print(toggle[i]);
-			Serial.print(" ");
-		}
-		Serial.println();
-	}
+	received = true; 
 }
 
 // rotate is called anytime the rotary inputs change state.
@@ -205,12 +262,10 @@ void rotate() {
     counter++;
   // fold from 0 to 127
   if (counter > 127) counter = 0;
-    if(DEBUG) Serial.println(counter);
   } else if (result == DIR_CCW) {
     counter--;
   // fold from 0 to 127
   if (counter > 127) counter = 127;
-    if(DEBUG) Serial.println(counter);
   }
   
 }
