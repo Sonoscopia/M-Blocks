@@ -32,7 +32,11 @@
 #define MIDICH 1 // MIDI channel
 #define DEBUG 1 // Debug code (send data to Serial)
 
-
-
+#define NMAP 0x1E // note map button code
+#define VMAP 0x1D// velocity map button code
+#define CCMAP 0x1C// cc map button code (= note+velocity buttons)
+#define LOADB 0x1B// load button code
+#define SAVEB 0x17 // save button code
+#define ENTER 0x0F //15: encoder button code 
 
 #endif /* GLOBALS_H_ */
