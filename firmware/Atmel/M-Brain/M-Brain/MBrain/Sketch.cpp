@@ -18,6 +18,7 @@
 
 // Libraries
 #include <Wire.h>
+#include <EEPROM.h>
 #include <MIDI.h>
 #include <Rotary.h>
 // My headers and classes 
@@ -67,6 +68,13 @@ void setup() {
   DDRF = 0b01111111; // analog A0 to A6 as outputs (leds)
   DDRC = 0b11100000; // set pins 37 to 33 as inputs (buttons)
   PORTC = 0b00011111; // enable input pullup on pins 37 to 33
+  
+  // LOAD state when previously disconnected (aka Preset 0)
+  for(int i = 0; i < 128; i++){
+	  notemap[i] = EEPROM.read(i);
+	  velmap[i] = EEPROM.read(i+VELOFFSET);
+	  ccmap[i] = EEPROM.read(i+CCOFFSET);
+  }
 }
 
 void loop() {

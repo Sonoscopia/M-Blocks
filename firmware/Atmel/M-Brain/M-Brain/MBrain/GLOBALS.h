@@ -39,4 +39,6 @@
 #define SAVEB 0x17 // save button code
 #define ENTER 0x0F //15: encoder button code 
 
+#define VELOFFSET 128
+#define CCOFFSET 256
 #endif /* GLOBALS_H_ */
