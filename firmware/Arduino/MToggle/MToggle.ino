@@ -1,5 +1,5 @@
 /* 
- *  M-Toggle (Master Sender) using Arduino Mega
+ *  M-Toggle (Master Sender) using Arduino Pro Mini
  *  
  *  Created: 24-08-2019
  *  Author: Tiago Ângelo (aka p1nh0)
