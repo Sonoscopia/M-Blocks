@@ -30,7 +30,6 @@
 #define PIN1 2 // rotary pins
 #define PIN2 3 // rotary pins
 #define MIDICH 1 // MIDI channel
-#define DEBUG 1 // Debug code (send data to Serial)
 
 #define NMAP 0x1E // note map button code
 #define VMAP 0x1D// velocity map button code
@@ -41,4 +40,10 @@
 
 #define VELOFFSET 128
 #define CCOFFSET 256
+
+#define DEBUG 1 // Debug code (send data to Serial)
+#define RESETMACHINEDATA 0
+
+
+
 #endif /* GLOBALS_H_ */
