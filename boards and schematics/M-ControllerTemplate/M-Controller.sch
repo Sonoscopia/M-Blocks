@@ -904,6 +904,10 @@ Note: if necessary use a Multiplexer 4051 and free DP13</text>
 <text x="106.68" y="127" size="1.778" layer="94">RIGHT</text>
 <text x="5.08" y="124.46" size="1.778" layer="94">LEFT</text>
 <text x="53.34" y="76.2" size="1.778" layer="94">BACK</text>
+<text x="41.91" y="108.966" size="1.778" layer="94">GND -  JACK=4  -  BROWN
+12v  -  JACK=1  -  RED
+SCL  -  JACK=2  -  ORANGE
+SDA -  JACK=3  -  YELLOW</text>
 </plain>
 <instances>
 <instance part="U$1" gate="G$1" x="208.28" y="139.7"/>
@@ -920,46 +924,46 @@ Note: if necessary use a Multiplexer 4051 and free DP13</text>
 <attribute name="VALUE" x="132.588" y="71.374" size="1.778" layer="96"/>
 </instance>
 <instance part="GND10" gate="1" x="124.46" y="157.48"/>
-<instance part="GND1" gate="1" x="20.32" y="134.62" rot="R270"/>
-<instance part="P+2" gate="1" x="15.24" y="134.62" smashed="yes">
-<attribute name="VALUE" x="14.224" y="142.494" size="1.778" layer="96" rot="R270"/>
+<instance part="GND1" gate="1" x="19.558" y="133.35" rot="R270"/>
+<instance part="P+2" gate="1" x="14.478" y="133.35" smashed="yes">
+<attribute name="VALUE" x="13.462" y="141.224" size="1.778" layer="96" rot="R270"/>
 </instance>
-<instance part="TRRS1" gate="-1" x="30.48" y="134.62" smashed="yes">
-<attribute name="NAME" x="33.02" y="133.858" size="1.524" layer="95"/>
+<instance part="TRRS1" gate="-1" x="27.178" y="133.35" smashed="yes">
+<attribute name="NAME" x="29.718" y="132.588" size="1.524" layer="95"/>
 </instance>
-<instance part="TRRS1" gate="-2" x="30.48" y="129.54"/>
-<instance part="TRRS1" gate="-3" x="30.48" y="124.46"/>
-<instance part="TRRS1" gate="-4" x="30.48" y="119.38"/>
+<instance part="TRRS1" gate="-2" x="27.178" y="128.27"/>
+<instance part="TRRS1" gate="-3" x="27.178" y="123.19"/>
+<instance part="TRRS1" gate="-4" x="27.178" y="118.11"/>
 <instance part="GND3" gate="1" x="63.5" y="162.56" rot="R180"/>
 <instance part="P+3" gate="1" x="63.5" y="167.64" smashed="yes" rot="R270">
 <attribute name="VALUE" x="71.374" y="168.656" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="TRRS2" gate="-1" x="63.5" y="152.4" smashed="yes" rot="R270">
-<attribute name="NAME" x="62.738" y="149.86" size="1.524" layer="95" rot="R270"/>
+<instance part="TRRS2" gate="-1" x="63.5" y="154.94" smashed="yes" rot="R270">
+<attribute name="NAME" x="62.738" y="152.4" size="1.524" layer="95" rot="R270"/>
 </instance>
-<instance part="TRRS2" gate="-2" x="58.42" y="152.4" rot="R270"/>
-<instance part="TRRS2" gate="-3" x="53.34" y="152.4" rot="R270"/>
-<instance part="TRRS2" gate="-4" x="48.26" y="152.4" rot="R270"/>
+<instance part="TRRS2" gate="-2" x="58.42" y="154.94" rot="R270"/>
+<instance part="TRRS2" gate="-3" x="53.34" y="154.94" rot="R270"/>
+<instance part="TRRS2" gate="-4" x="48.26" y="154.94" rot="R270"/>
 <instance part="GND4" gate="1" x="96.52" y="121.92" rot="R90"/>
 <instance part="P+4" gate="1" x="101.6" y="121.92" smashed="yes" rot="R180">
 <attribute name="VALUE" x="102.616" y="114.046" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="TRRS3" gate="-1" x="86.36" y="121.92" smashed="yes" rot="R180">
-<attribute name="NAME" x="83.82" y="122.682" size="1.524" layer="95" rot="R180"/>
+<instance part="TRRS3" gate="-1" x="88.9" y="121.92" smashed="yes" rot="R180">
+<attribute name="NAME" x="86.36" y="122.682" size="1.524" layer="95" rot="R180"/>
 </instance>
-<instance part="TRRS3" gate="-2" x="86.36" y="127" rot="R180"/>
-<instance part="TRRS3" gate="-3" x="86.36" y="132.08" rot="R180"/>
-<instance part="TRRS3" gate="-4" x="86.36" y="137.16" rot="R180"/>
-<instance part="GND5" gate="1" x="50.8" y="88.9"/>
-<instance part="P+5" gate="1" x="50.8" y="83.82" smashed="yes" rot="R90">
-<attribute name="VALUE" x="42.926" y="82.804" size="1.778" layer="96"/>
+<instance part="TRRS3" gate="-2" x="88.9" y="127" rot="R180"/>
+<instance part="TRRS3" gate="-3" x="88.9" y="132.08" rot="R180"/>
+<instance part="TRRS3" gate="-4" x="88.9" y="137.16" rot="R180"/>
+<instance part="GND5" gate="1" x="49.784" y="88.138"/>
+<instance part="P+5" gate="1" x="49.784" y="83.058" smashed="yes" rot="R90">
+<attribute name="VALUE" x="41.91" y="82.042" size="1.778" layer="96"/>
 </instance>
-<instance part="TRRS4" gate="-1" x="50.8" y="99.06" smashed="yes" rot="R90">
-<attribute name="NAME" x="51.562" y="101.6" size="1.524" layer="95" rot="R90"/>
+<instance part="TRRS4" gate="-1" x="49.784" y="95.758" smashed="yes" rot="R90">
+<attribute name="NAME" x="50.546" y="98.298" size="1.524" layer="95" rot="R90"/>
 </instance>
-<instance part="TRRS4" gate="-2" x="55.88" y="99.06" rot="R90"/>
-<instance part="TRRS4" gate="-3" x="60.96" y="99.06" rot="R90"/>
-<instance part="TRRS4" gate="-4" x="66.04" y="99.06" rot="R90"/>
+<instance part="TRRS4" gate="-2" x="54.864" y="95.758" rot="R90"/>
+<instance part="TRRS4" gate="-3" x="59.944" y="95.758" rot="R90"/>
+<instance part="TRRS4" gate="-4" x="65.024" y="95.758" rot="R90"/>
 <instance part="ANL1" gate="-1" x="124.46" y="78.74" smashed="yes" rot="R90">
 <attribute name="NAME" x="124.968" y="83.058" size="1.524" layer="95" rot="R180"/>
 </instance>
@@ -1075,22 +1079,22 @@ Note: if necessary use a Multiplexer 4051 and free DP13</text>
 <wire x1="243.84" y1="149.86" x2="243.84" y2="147.32" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<wire x1="27.94" y1="134.62" x2="22.86" y2="134.62" width="0.1524" layer="91"/>
+<wire x1="24.638" y1="133.35" x2="22.098" y2="133.35" width="0.1524" layer="91"/>
 <pinref part="GND1" gate="1" pin="GND"/>
 <pinref part="TRRS1" gate="-1" pin="S"/>
 </segment>
 <segment>
-<wire x1="63.5" y1="154.94" x2="63.5" y2="160.02" width="0.1524" layer="91"/>
+<wire x1="63.5" y1="157.48" x2="63.5" y2="160.02" width="0.1524" layer="91"/>
 <pinref part="GND3" gate="1" pin="GND"/>
 <pinref part="TRRS2" gate="-1" pin="S"/>
 </segment>
 <segment>
-<wire x1="88.9" y1="121.92" x2="93.98" y2="121.92" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="121.92" x2="93.98" y2="121.92" width="0.1524" layer="91"/>
 <pinref part="GND4" gate="1" pin="GND"/>
 <pinref part="TRRS3" gate="-1" pin="S"/>
 </segment>
 <segment>
-<wire x1="50.8" y1="96.52" x2="50.8" y2="91.44" width="0.1524" layer="91"/>
+<wire x1="49.784" y1="93.218" x2="49.784" y2="90.678" width="0.1524" layer="91"/>
 <pinref part="GND5" gate="1" pin="GND"/>
 <pinref part="TRRS4" gate="-1" pin="S"/>
 </segment>
@@ -1155,23 +1159,23 @@ Note: if necessary use a Multiplexer 4051 and free DP13</text>
 <label x="211.074" y="137.414" size="1.778" layer="95"/>
 </segment>
 <segment>
-<wire x1="27.94" y1="119.38" x2="22.86" y2="119.38" width="0.1524" layer="91"/>
-<label x="17.526" y="118.618" size="1.778" layer="95"/>
+<wire x1="24.638" y1="118.11" x2="22.098" y2="118.11" width="0.1524" layer="91"/>
+<label x="16.764" y="117.348" size="1.778" layer="95"/>
 <pinref part="TRRS1" gate="-4" pin="S"/>
 </segment>
 <segment>
-<wire x1="48.26" y1="154.94" x2="48.26" y2="160.02" width="0.1524" layer="91"/>
+<wire x1="48.26" y1="157.48" x2="48.26" y2="160.02" width="0.1524" layer="91"/>
 <label x="47.498" y="165.354" size="1.778" layer="95" rot="R270"/>
 <pinref part="TRRS2" gate="-4" pin="S"/>
 </segment>
 <segment>
-<wire x1="88.9" y1="137.16" x2="93.98" y2="137.16" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="137.16" x2="93.98" y2="137.16" width="0.1524" layer="91"/>
 <label x="99.314" y="137.922" size="1.778" layer="95" rot="R180"/>
 <pinref part="TRRS3" gate="-4" pin="S"/>
 </segment>
 <segment>
-<wire x1="66.04" y1="96.52" x2="66.04" y2="91.44" width="0.1524" layer="91"/>
-<label x="66.802" y="86.106" size="1.778" layer="95" rot="R90"/>
+<wire x1="65.024" y1="93.218" x2="65.024" y2="90.678" width="0.1524" layer="91"/>
+<label x="65.786" y="85.344" size="1.778" layer="95" rot="R90"/>
 <pinref part="TRRS4" gate="-4" pin="S"/>
 </segment>
 </net>
@@ -1183,23 +1187,23 @@ Note: if necessary use a Multiplexer 4051 and free DP13</text>
 <label x="211.074" y="147.828" size="1.778" layer="95"/>
 </segment>
 <segment>
-<wire x1="27.94" y1="124.46" x2="20.32" y2="124.46" width="0.1524" layer="91"/>
-<label x="15.748" y="123.444" size="1.778" layer="95"/>
+<wire x1="24.638" y1="123.19" x2="19.558" y2="123.19" width="0.1524" layer="91"/>
+<label x="14.986" y="122.174" size="1.778" layer="95"/>
 <pinref part="TRRS1" gate="-3" pin="S"/>
 </segment>
 <segment>
-<wire x1="53.34" y1="154.94" x2="53.34" y2="162.56" width="0.1524" layer="91"/>
+<wire x1="53.34" y1="157.48" x2="53.34" y2="162.56" width="0.1524" layer="91"/>
 <label x="52.324" y="167.132" size="1.778" layer="95" rot="R270"/>
 <pinref part="TRRS2" gate="-3" pin="S"/>
 </segment>
 <segment>
-<wire x1="88.9" y1="132.08" x2="96.52" y2="132.08" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="132.08" x2="96.52" y2="132.08" width="0.1524" layer="91"/>
 <label x="101.092" y="133.096" size="1.778" layer="95" rot="R180"/>
 <pinref part="TRRS3" gate="-3" pin="S"/>
 </segment>
 <segment>
-<wire x1="60.96" y1="96.52" x2="60.96" y2="88.9" width="0.1524" layer="91"/>
-<label x="61.976" y="84.328" size="1.778" layer="95" rot="R90"/>
+<wire x1="59.944" y1="93.218" x2="59.944" y2="88.138" width="0.1524" layer="91"/>
+<label x="60.96" y="83.566" size="1.778" layer="95" rot="R90"/>
 <pinref part="TRRS4" gate="-3" pin="S"/>
 </segment>
 </net>
@@ -1331,27 +1335,27 @@ Note: if necessary use a Multiplexer 4051 and free DP13</text>
 <wire x1="243.84" y1="152.4" x2="243.84" y2="154.94" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<wire x1="27.94" y1="129.54" x2="15.24" y2="129.54" width="0.1524" layer="91"/>
+<wire x1="24.638" y1="128.27" x2="14.478" y2="128.27" width="0.1524" layer="91"/>
 <pinref part="P+2" gate="1" pin="+12V"/>
-<wire x1="15.24" y1="129.54" x2="15.24" y2="132.08" width="0.1524" layer="91"/>
+<wire x1="14.478" y1="128.27" x2="14.478" y2="130.81" width="0.1524" layer="91"/>
 <pinref part="TRRS1" gate="-2" pin="S"/>
 </segment>
 <segment>
-<wire x1="58.42" y1="154.94" x2="58.42" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="58.42" y1="157.48" x2="58.42" y2="167.64" width="0.1524" layer="91"/>
 <pinref part="P+3" gate="1" pin="+12V"/>
 <wire x1="58.42" y1="167.64" x2="60.96" y2="167.64" width="0.1524" layer="91"/>
 <pinref part="TRRS2" gate="-2" pin="S"/>
 </segment>
 <segment>
-<wire x1="88.9" y1="127" x2="101.6" y2="127" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="127" x2="101.6" y2="127" width="0.1524" layer="91"/>
 <pinref part="P+4" gate="1" pin="+12V"/>
 <wire x1="101.6" y1="127" x2="101.6" y2="124.46" width="0.1524" layer="91"/>
 <pinref part="TRRS3" gate="-2" pin="S"/>
 </segment>
 <segment>
-<wire x1="55.88" y1="96.52" x2="55.88" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="54.864" y1="93.218" x2="54.864" y2="83.058" width="0.1524" layer="91"/>
 <pinref part="P+5" gate="1" pin="+12V"/>
-<wire x1="55.88" y1="83.82" x2="53.34" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="54.864" y1="83.058" x2="52.324" y2="83.058" width="0.1524" layer="91"/>
 <pinref part="TRRS4" gate="-2" pin="S"/>
 </segment>
 </net>
