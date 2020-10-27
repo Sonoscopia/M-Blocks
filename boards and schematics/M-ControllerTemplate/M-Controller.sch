@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -908,6 +908,7 @@ Note: if necessary use a Multiplexer 4051 and free DP13</text>
 12v  -  JACK=1  -  RED
 SCL  -  JACK=2  -  ORANGE
 SDA -  JACK=3  -  YELLOW</text>
+<text x="217.17" y="20.574" size="1.778" layer="94">Tiago Ângelo / SONOSCOPIA.PT</text>
 </plain>
 <instances>
 <instance part="U$1" gate="G$1" x="208.28" y="139.7"/>
