@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -7516,8 +7516,6 @@ wire to board 2.54 mm (.1 inch) pitch header</description>
 <plain>
 <text x="165.1" y="17.78" size="1.778" layer="94">Simplified version (no screen). 
 Prototype v0.1</text>
-<text x="165.1" y="5.08" size="1.778" layer="94">By Tiago Ângelo 
-At Sonoscopia.pt</text>
 <wire x1="33.02" y1="142.24" x2="71.12" y2="142.24" width="0.1524" layer="94"/>
 <wire x1="71.12" y1="142.24" x2="71.12" y2="104.14" width="0.1524" layer="94"/>
 <wire x1="71.12" y1="104.14" x2="33.02" y2="104.14" width="0.1524" layer="94"/>
@@ -7567,6 +7565,7 @@ SDA -  JACK=3  -  YELLOW</text>
 <text x="103.632" y="5.08" size="1.778" layer="94">GND  - socket=2 - BROWN
 5V     - socket=4 - RED
 data  - socket=5 - ORANGE</text>
+<text x="217.17" y="20.32" size="1.778" layer="94">Tiago Ângelo / SONOSCOPIA.PT</text>
 </plain>
 <instances>
 <instance part="FRAME1" gate="G$1" x="0" y="0"/>
