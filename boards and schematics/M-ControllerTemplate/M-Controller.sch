@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -1386,11 +1386,6 @@ SDA -  JACK=3  -  YELLOW</text>
 </net>
 <net name="+5V" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="RST"/>
-<pinref part="P+6" gate="1" pin="+5V"/>
-<wire x1="228.6" y1="147.32" x2="231.14" y2="147.32" width="0.1524" layer="91"/>
-</segment>
-<segment>
 <pinref part="P+7" gate="1" pin="+5V"/>
 <pinref part="ANL1" gate="-3" pin="S"/>
 </segment>
@@ -1405,6 +1400,12 @@ SDA -  JACK=3  -  YELLOW</text>
 <segment>
 <pinref part="P+10" gate="1" pin="+5V"/>
 <pinref part="ANL4" gate="-3" pin="S"/>
+</segment>
+<segment>
+<pinref part="U$1" gate="G$1" pin="VCC"/>
+<pinref part="P+6" gate="1" pin="+5V"/>
+<wire x1="228.6" y1="144.78" x2="231.14" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="231.14" y1="144.78" x2="231.14" y2="147.32" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>

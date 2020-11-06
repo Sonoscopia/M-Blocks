@@ -3251,13 +3251,6 @@ lack of space in case)</text>
 <label x="130.048" y="124.714" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="+5V" class="0">
-<segment>
-<pinref part="U$1" gate="G$1" pin="RST"/>
-<pinref part="P+6" gate="1" pin="+5V"/>
-<wire x1="228.6" y1="147.32" x2="231.14" y2="147.32" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="N$1" class="0">
 <segment>
 <pinref part="LED1" gate="-2" pin="S"/>
@@ -3280,6 +3273,14 @@ lack of space in case)</text>
 <segment>
 <pinref part="LED4" gate="-2" pin="S"/>
 <pinref part="R4" gate="G$1" pin="2"/>
+</segment>
+</net>
+<net name="+5V" class="0">
+<segment>
+<pinref part="U$1" gate="G$1" pin="VCC"/>
+<pinref part="P+6" gate="1" pin="+5V"/>
+<wire x1="228.6" y1="144.78" x2="231.14" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="231.14" y1="144.78" x2="231.14" y2="147.32" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
