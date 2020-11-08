@@ -9,7 +9,7 @@
 
 #define NUMBYTES 4 // number of bytes using in communication from M-Controllers to M-Brain
 #define BRAIN 8 // Slave Receiver address (M-Brain)
-#define DEBUG 1
+#define DEBUG 0
 
 char inputs[4] = {A0, A1, A2, A3}; // BUTTON PINS 
 byte potstate[4] = {0, 0, 0, 0};
