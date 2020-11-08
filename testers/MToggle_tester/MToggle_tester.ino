@@ -1,9 +1,9 @@
 char inputs[4] = {A0, A1, A2, A3}; // BUTTON PINS 
 byte leds[4] = {2, 3, 4, 7}; // LED PINS 
 boolean toggle[4] = {0, 0, 0, 0};
-boolean bstate[4] = {0, 0, 0, 0};
-boolean _bstate[4] = {1, 1, 1, 1};
-
+boolean bstate[4] = {0, 0, 0, 0}; // current button state
+boolean _bstate[4] = {1, 1, 1, 1}; // previous button state
+boolean changed = false; 
 
 void setup() {
   Serial.begin(9600);
@@ -20,11 +20,19 @@ void loop() {
     bstate[i] = digitalRead(inputs[i]);
     if( bstate[i] < 1 && _bstate[i] > 0 ){
       toggle[i] = !toggle[i];
+      changed = true;
     }
     _bstate[i] = bstate[i];
     digitalWrite(leds[i], toggle[i]);
-    Serial.print(toggle[i]);
-    Serial.print(" ");
   }
-  Serial.println();
+  
+  if(changed){ 
+    for(int i = 0; i < 4; i++){
+      Serial.print(toggle[i]);
+      Serial.print(" ");
+    }
+    Serial.println();
+  }
+
+  changed = false; 
 }
