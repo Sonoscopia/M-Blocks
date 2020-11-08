@@ -36,7 +36,7 @@ void loop() {
     Wire.write(potstate, NUMBYTES);
     Wire.endTransmission();
 
-    if(DEBUG && changed){
+    if(DEBUG){
       for(int i = 0; i < 4; i++){
         Serial.print((byte)potstate[i]);
         Serial.print(" ");
