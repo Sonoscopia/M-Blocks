@@ -7554,7 +7554,7 @@ Prototype v0.1</text>
 <text x="35.56" y="139.7" size="1.778" layer="94">TRRS Connectors</text>
 <wire x1="58.42" y1="63.5" x2="58.42" y2="38.1" width="0.1524" layer="94"/>
 <text x="93.98" y="58.42" size="1.778" layer="94">Note = pin 37
-Vel = pin 36
+CC = pin 36
 Load = pin 35
 Save = pin 34
 Enter = pin 33</text>
