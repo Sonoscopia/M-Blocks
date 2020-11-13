@@ -40,7 +40,9 @@
 #define CHMAP 0x12 // channel map combo button code (NOTE + LOAD)
 #define GCHSET 0x10 // set global channel combo button code (NOTE + CC + LOAD)
 #define LOADB 0x13// load button code
+#define LOADYES 0x03 // confirm load button combo (LOAD + ENTER)
 #define SAVEB 0x1F // save button code
+#define SAVEYES 0x0F // confirm save button combo (SAVE + ENTER)
 #define ENTER 0x07 //15: encoder button code 
 #define RESET 0x1B // RESET preset#0 (init blank state) 
 

@@ -39,6 +39,7 @@ void resetMsg(); // reset I2C message
 void rotate();
 void timerISR();
 void michaelKnight(uint16_t t, boolean d);
+void blinkConfirm();
 //End of Auto generated function prototypes by Atmel Studio
 
 MIDI_CREATE_INSTANCE(HardwareSerial, Serial1, MIDI);
@@ -57,8 +58,10 @@ int8_t velmap[128];
 int8_t ccmap[128]; 
 uint8_t globalch = 1; // set global channel 
 uint8_t preset = 0; // current preset
+uint16_t loc = 0; // memory location
+boolean first = true; 
 
-boolean debug = true;
+boolean debug = false;
 
 void setup() {
   Wire.begin(ADDR); 
@@ -130,7 +133,7 @@ void loop(){
 					Serial.print( get_ctrl(maddr) ); Serial.print( " = " ); Serial.println( mval );
 		}	
 	}
-		
+
 	switch(PINC){
 		//############### NOTE MAP ###############################################
 		case NMAP:
@@ -192,6 +195,7 @@ void loop(){
 		//############### CC MAP #################################################
 		case CCMAP:
 			if(debug) Serial.println("CC MAP MODE");
+			
 			if(ccmap[maddr] > -1) counter = ccmap[maddr]; // set ENCODER value
 			else counter = 0; 
 			
@@ -278,12 +282,70 @@ void loop(){
 				break;
 				//############### LOAD PRESET ####################################
 				case  LOADB:
-					Timer1.detachInterrupt(); // turn leds off if mapping mode is engaged but is the cancelled after pressing LOAD
-					PORTF = 0x00; // turn all LEDS off
+					// CANCEL (1st time press only!)
+					if(first){
+						Timer1.detachInterrupt(); // turn leds off if mapping mode is engaged but is the cancelled after pressing LOAD
+						PORTF = 0x00; // turn all LEDS off
+						preset = 0;
+						counter = 0;
+						first = false; 	
+					} // CANCEL 
+					else{ // SELECT PRESET TO LOAD
+						if(counter > 7) counter = 0;
+						preset = counter;
+						PORTF = (BIT(preset) >> 1) ^ 0xFF; // unlit led represents selected preset, if all leds on preset=0 (0xFF = 0b11111111)	
+					}
+				break;
+				
+				case LOADYES:
+					for(int i = 0; i < 128; i++){
+						// load channel map
+						loc = (preset << 9) + CHOFFSET + i;
+						chmap[i] = EEPROM.read(loc);
+						// load note map
+						loc = (preset << 9) + NOTEOFFSET + i;
+						notemap[i] = EEPROM.read(loc);
+						// load velocity map
+						loc = (preset << 9) + VELOFFSET + i;
+						velmap[i] = EEPROM.read(loc);
+						// load cc map
+						loc = (preset << 9) + CCOFFSET + i;
+						ccmap[i] = EEPROM.read(loc);
+					}
+					blinkConfirm();
+				break;
+				
+				//############### SAVE PRESET ####################################
+				case SAVEB: // SELECT PRESET TO SAVE
+					if(counter > 7) counter = 0;
+					preset = counter;
+					PORTF = (BIT(preset) >> 1) ^ 0xFF; // unlit led represents selected preset, if all leds on preset=0 (0xFF = 0b11111111)	
+				break;
+				
+				case SAVEYES: // save preset 0 to a selected preset slot
+					for(int i = 0; i < 128; i++){  
+						// save channel map
+						loc = (preset << 9) + CHOFFSET + i;
+						EEPROM.write(loc, chmap[i]);
+						// save note map
+						loc = (preset << 9) + NOTEOFFSET + i;
+						EEPROM.write(loc, notemap[i]);
+						// save velocity map
+						loc = (preset << 9) + VELOFFSET + i;
+						EEPROM.write(loc, velmap[i]);
+						// save cc map
+						loc = (preset << 9) + CCOFFSET + i;
+						EEPROM.write(loc, ccmap[i]);
+					}
+					blinkConfirm();
 				break;
 				
 		//############### PLAY MODE ##############################################
 		default: // no buttons pressed
+			first = true; // reset (used for LOAD/CANCEL behaviour)
+			preset = 0; // reset preset to 0 if all buttons are released
+			PORTF = 0x00; // turn all LED's off
+			
 			if(received){ // if a message from a M-Controller is received
 				if(debug){ Serial.print("PLAY: "); Serial.print(maddr, BIN); Serial.print(" | "); Serial.println(mval); }
 		
@@ -342,7 +404,6 @@ void rotate() {
   // fold from 0 to 127
   if (counter > 127) counter = 127;
   }
-  
 }
 
 // timerISR uses TimerOne
@@ -374,4 +435,31 @@ void michaelKnight(uint16_t t, boolean d){
 		}
 	}
 	PORTF = 0x00; // safely set port to 0 (leds off)
+}
+
+void blinkConfirm(){
+	PORTF = 0x00;
+	
+	PORTF ^= 0b01111111;
+	delay(100);
+	PORTF ^= 0b01111111;
+	delay(100);
+	PORTF ^= 0b01111111;
+	delay(100);
+	PORTF ^= 0b01111111;
+	delay(100);
+	PORTF ^= 0b01111111;
+	delay(100);
+	PORTF ^= 0b01111111;
+	delay(100);
+	PORTF ^= 0b01111111;
+	delay(100);
+	PORTF ^= 0b01111111;
+	delay(100);
+	PORTF ^= 0b01111111;
+	delay(100);
+	PORTF ^= 0b01111111;
+	delay(100);
+	
+	PORTF = 0x00;
 }
