@@ -4,6 +4,12 @@
 /*End of auto generated code by Atmel studio */
 
 /* 
+ *	Version: 0.1.0 (protobrain)
+ *	Created: 12-11-2020
+ *  Author: Tiago Ângelo (aka p1nh0)
+*/
+
+/* 
  *  M-Brain (Slave Receiver) using Arduino Mega
  *  prototype version with four buttons (Note Map, CC Map, Load, Save)
  *  7 leds to display values from 0 to 127 in binary format
@@ -12,8 +18,6 @@
  *  buttons are connected to input pins 37, 36, 35 and 34 (with INPUT_PULLUP)
  *  buttons are connected to PORTC
  *  leds are connected to analog inputs A0 to A6 (PORTF)
- *  Created: 24-08-2019
- *  Author: Tiago Ângelo (aka p1nh0)
 */
 
 #pragma GCC push_options
@@ -24,235 +28,168 @@
 #include <EEPROM.h>
 #include <MIDI.h>
 #include <Rotary.h>
+#include <TimerOne.h>
+
 // My headers and classes 
 #include "GLOBALS.h"
 
 //Beginning of Auto generated function prototypes by Atmel Studio
 void receiveI2C(int howmany);
 void rotate();
+void timerISR();
+void michaelKnight(uint16_t t, boolean d);
 //End of Auto generated function prototypes by Atmel Studio
 
 MIDI_CREATE_INSTANCE(HardwareSerial, Serial1, MIDI);
 
 Rotary rotary = Rotary(PIN1, PIN2);
-// Counter that will beincremented or decremented by rotation.
-volatile byte counter = 0;
 
-byte toggle[4] = {0, 0, 0, 0}; // values received from M-Toggle
-byte mtoggle[4] = {0, 0, 0, 0}; // values stored in M-Brain to check for changes
+volatile byte counter = 0; // Counter that will be incremented or decremented by rotation.
 volatile boolean received = false; 
+byte message[NUMBYTES]; // used to read I2C message
+uint8_t maddr, mval; // easy access of I2C messages
 
-// Arrays stored in EEPROM presets
-byte notemap[128];
-byte velmap[128];
-byte ccmap[128]; 
+// event mapping arrays (stored and recalled from EEPROM) 
+uint8_t chmap[128];
+int8_t notemap[128];
+int8_t velmap[128];
+int8_t ccmap[128]; 
+uint8_t globalch = 1; // set global channel 
+uint8_t preset = 0; // current preset
 
-int8_t veloffset, noteoffset;
-
-byte mode = 0; 
-
+boolean debug = true;
 
 void setup() {
   Wire.begin(ADDR); 
   Wire.onReceive(receiveI2C);
   
-  if(DEBUG) Serial.begin(9600);
-  
-  MIDI.begin(MIDICH);
-  
   // Rotary interrupts
   attachInterrupt(digitalPinToInterrupt(PIN1), rotate, CHANGE);
   attachInterrupt(digitalPinToInterrupt(PIN2), rotate, CHANGE);
-  if(DEBUG) Serial.print("interrupt pin1: ");
-  if(DEBUG) Serial.println(digitalPinToInterrupt(PIN1));
-  if(DEBUG) Serial.print("interrupt pin2: ");
-  if(DEBUG) Serial.println(digitalPinToInterrupt(PIN2));
+  if(debug) Serial.print("interrupt pin1: ");
+  if(debug) Serial.println(digitalPinToInterrupt(PIN1));
+  if(debug) Serial.print("interrupt pin2: ");
+  if(debug) Serial.println(digitalPinToInterrupt(PIN2));
   
-  DDRF = 0b01111111; // analog A0 to A6 as outputs (leds)
+  // Pin Setup
+  DDRF = 0b11111111; // analog A0 to A6 as outputs (leds)
   DDRC = 0b11100000; // set pins 37 to 33 as inputs (buttons)
   PORTC = 0b00011111; // enable input pullup on pins 37 to 33
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, LOW);
   
+  // Debug
+  if(PINC == ENTER){
+	Serial.begin(9600);
+	debug = true;
+  }
+  else if(debug) { Serial.begin(115200); Serial.println("DEBUG MODE"); }
+  
+  // Midi  
+  MIDI.begin(globalch);
+  
   // RESET PRESET MEMORY (see GLOBALS)
-  if(RESETMACHINEDATA){
+  if(PINC == RESET){
 	for(int i = 0; i < 128; i++){
-		EEPROM.write(i, 0); // reset notemap
-		EEPROM.write(i+VELOFFSET, 127); // reset velmap
-		EEPROM.write(i+CCOFFSET, 0); // reset ccmap
+		// reset channel map
+		chmap[i] = 0;
+		EEPROM.write(CHOFFSET + i, 0); 
+		// reset notemap
+		notemap[i] = -1;
+		EEPROM.write(NOTEOFFSET + i, -1); 
+		// reset velmap
+		velmap[i] = 127;
+		EEPROM.write(VELOFFSET + i, 127);
+		// reset ccmap
+		ccmap[i] = -1; 
+		EEPROM.write(CCOFFSET + i, -1); 
 	}
-	delay(1000);
+	if(debug) Serial.println("RESET preset 0");
+	michaelKnight(100, 1);
+  }
+  else{
+	  // LOAD machine previous state (aka Preset 0)
+	  for(int i = 0; i < 128; i++){
+		  chmap[i] = EEPROM.read(CHOFFSET + i);
+		  notemap[i] = EEPROM.read(NOTEOFFSET + i);
+		  velmap[i] = EEPROM.read(VELOFFSET + i);
+		  ccmap[i] = EEPROM.read(CCOFFSET +	i);
+	  }
+	  michaelKnight(100, 0);
+	  if(debug) Serial.println("LOADED preset 0");
   }
   
-  // LOAD machine previous state (aka Preset 0)
-  for(int i = 0; i < 128; i++){
-    notemap[i] = EEPROM.read(i);
-    velmap[i] = EEPROM.read(i+VELOFFSET);
-    ccmap[i] = EEPROM.read(i+CCOFFSET);
-  }
-  delay(1000);
 }
-
-
-/*void loop() {
-  if (DEBUG && mode != PINC){
-    Serial.print("MODE: ");
-    Serial.println(PINC, BIN);
-    mode = PINC;    
-  }
-    
-  switch(PINC){
-    case NMAP: // NOTE MAP MODE
-    counter = 0;
-    //while(received && PINC != ENTER){
-	while(PINC == NMAP){
-		digitalWrite(LED_BUILTIN, HIGH);
-      noteoffset = -1; 
-      for (byte i = 0; i < 4; i++){ // check which button has changed
-        if (mtoggle[i] != toggle[i]){
-          noteoffset = i;
-        }
-      }
-      if(noteoffset > -1){
-        notemap[noteoffset] = counter;
-        PORTF = counter; // light leds
-        if(DEBUG){
-          Serial.print("notemap[");
-          Serial.print(noteoffset);
-          Serial.print("] = ");
-          Serial.println(counter);
-        } 
-      }
-      
-    }
-    // write to memory (hold machine state prior to shutdown)
-    if(noteoffset > -1){ // safeguard (avoid EEPROM writing errors)
-      EEPROM.write(noteoffset, counter);  
-    }
-    // reset
-	digitalWrite(LED_BUILTIN, LOW);
-    received = false;
-    counter = 0;  
-    PORTF = counter; // light leds
-    break;
-    
-    case VMAP: // NOTE MAP MODE
-    counter = 0;
-    while(received && PINC != ENTER){
-      veloffset = -1;
-      for (byte i = 0; i < 4; i++){ // check which button has changed
-        if (mtoggle[i] != toggle[i]){
-          veloffset = i;
-        }
-      }
-      if(veloffset > -1){
-        velmap[veloffset] = counter;
-        PORTF = counter; // light leds
-        if(DEBUG){
-          Serial.print("velmap[");
-          Serial.print(veloffset);
-          Serial.print("] = ");
-          Serial.println(counter);
-        }
-      }
-      
-    }
-    // write to memory (hold machine state prior to shutdown)
-    if(veloffset > -1){ // safeguard (avoid EEPROM writing errors)
-      EEPROM.write(veloffset+VELOFFSET, counter);
-    }
-    // reset
-    received = false;
-    counter = 0;
-    PORTF = counter; // light leds
-    break;
-    
-    
-    default: // PLAY MODE
-		while(received){
-			for (byte i = 0; i < 4; i++){
-			  if(mtoggle[i] != toggle[i]){
-				mtoggle[i] = toggle[i];
-				if(toggle[i]>0)   MIDI.sendNoteOn(notemap[i], velmap[i], MIDICH);
-				else              MIDI.sendNoteOff(notemap[i], 0, MIDICH);
-			  }
-			}
-			received = false;
-		}
-    break;
-
-  }
-  
-}*/
 
 void loop(){
+	if(received){
+		maddr = message[0]; // memory address (from 0 to 127, representing each controller of each M-Controller)
+		mval = message[1]; // controller value (ex: knob value, button, etc.)
+		if(debug){ Serial.print( "M-Controller ID:" ); Serial.println( get_maddr(maddr) ); Serial.print( "Controller#" );
+					Serial.print( get_ctrl(maddr) ); Serial.print( " = " ); Serial.println( mval );
+		}	
+	}
+		
 	switch(PINC){
-		/* ############## NOTE MAP ###############################################*/
+		//############### NOTE MAP ###############################################
 		case NMAP:
-			counter = 0;
-			noteoffset = -1; 
-			digitalWrite(LED_BUILTIN, HIGH);
-			while(PINC == NMAP){
-				for(int i = 0; i < 4; i++){
-					if(mtoggle[i] != toggle[i]) noteoffset = i;
+			if(debug) Serial.println("NOTE MAP MODE");
+			counter = 0; // reset ENCODER value
+			if (!received)
+			{
+				Timer1.initialize(BLINK2X);
+				Timer1.attachInterrupt( timerISR ); // blink LEDS 2x a second
+			}
+			
+			while(received){
+				Timer1.detachInterrupt();
+				PORTF = counter; // display value
+				
+				if(PINC == ENTER) {
+					notemap[maddr] = counter; // store value in volatile memory (preset=0)
+					EEPROM.write(NOTEOFFSET + maddr, counter);
+					PORTF = 0x00; // turn all LEDS off
+					received = false;
 				}
 			}
-			if(noteoffset>-1) counter = EEPROM.read(noteoffset);
-			while(PINC != ENTER){
-				if (noteoffset > -1){
-					notemap[noteoffset] = counter;
-					PORTF = counter; // light leds
-					EEPROM.write(noteoffset, counter); 
-				}
-			}
-			mtoggle[noteoffset] = toggle[noteoffset]; // update
-			digitalWrite(LED_BUILTIN, LOW);
-			PORTF = 0x00; // turn leds off
 		break;
 		
-		/* ############## VEL MAP ################################################*/
-		case VMAP:
-		counter = 0; //reset counter
-		veloffset = -1;
-		digitalWrite(LED_BUILTIN, HIGH);
-		while(PINC == VMAP){
-			for(int i = 0; i < 4; i++){
-				if(mtoggle[i] != toggle[i]) veloffset = i;
+		//############### PLAY MODE ##############################################
+		default: // no buttons pressed
+			if(received){ // if a message from a M-Controller is received
+				if(debug){ Serial.print("PLAY: "); Serial.print(maddr, BIN); Serial.print(" | "); Serial.println(mval); }
+		
+				uint8_t ch; // channel variable visible to PLAY MODE only
+				
+				if (chmap[maddr] > 0 ) ch = chmap[maddr];	// use chmap if there is one
+				else ch = globalch; // if channel is 0 then use global channel
+				
+				if (notemap[maddr] > -1 ) // if there's a notemap stored
+				{
+					if(mval > 0) MIDI.sendNoteOn(notemap[maddr], velmap[maddr], globalch);
+					else MIDI.sendNoteOff(notemap[maddr], 0, globalch);
+				}
+				
+				if (ccmap[maddr] > -1 ) // if there's a ccmap stored
+				{
+					MIDI.sendControlChange(ccmap[maddr], mval, globalch);
+				}
+				
+				received = false; 
 			}
-		}
-		if(veloffset>-1) counter = EEPROM.read(VELOFFSET+veloffset); // update counter
-		while(PINC != ENTER){
-			if (veloffset > -1){
-				velmap[veloffset] = counter;
-				PORTF = counter; // light leds
-				EEPROM.write(VELOFFSET+veloffset, counter);
-			}
-		}
-		mtoggle[veloffset] = toggle[veloffset]; // update
-		digitalWrite(LED_BUILTIN, LOW);
-		PORTF = 0x00; // turn leds off
-		break;
-		/* ############## PLAY MODE ##############################################*/
-		default:
-		for (byte i = 0; i < 4; i++){
-			if(mtoggle[i] != toggle[i]){
-				mtoggle[i] = toggle[i]; // update
-				if(toggle[i]>0)   MIDI.sendNoteOn(notemap[i], velmap[i], MIDICH);
-				else              MIDI.sendNoteOff(notemap[i], 0, MIDICH);
-			}
-		}
 		break;
 	}
 }
 
+// called whenever an I2C message is received
 void receiveI2C(int howmany){
 	byte index = 0;
 	while(Wire.available()){
 		byte v = Wire.read();
-		toggle[index] = v;
+		message[index] = v;
 		index++;
 	}
-	received = true; 
+	received = true;
 }
 
 // rotate is called anytime the rotary inputs change state.
@@ -268,4 +205,35 @@ void rotate() {
   if (counter > 127) counter = 127;
   }
   
+}
+
+// timerISR uses TimerOne
+void timerISR(){
+	// toggle all 7-LED's 
+	PORTF ^= 0b01111111; 
+}
+
+// Michael Knight LED movement
+void michaelKnight(uint16_t t, boolean d){
+	if(d<1){ // right-to-left direction
+		for(int i=0; i < 7; i++){
+			PORTF = 1 << i;
+			delay(t);
+		}
+		for(int i=1; i < 8; i++){
+			PORTF = 64 >> i;
+			delay(t);
+		}
+	}
+	else{ //left-to-right direction
+		for(int i=0; i < 7; i++){
+			PORTF = 64 >> i;
+			delay(t);
+		}
+		for(int i=1; i < 8; i++){
+			PORTF = 1 << i;
+			delay(t);
+		}
+	}
+	PORTF = 0x00; // safely set port to 0 (leds off)
 }
