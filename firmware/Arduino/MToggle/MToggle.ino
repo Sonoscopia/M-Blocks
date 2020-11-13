@@ -8,11 +8,11 @@
 
 #include <Wire.h>
 
-#define NUMBYTES 2 // number of bytes using in communication from M-Controllers to M-Brain
-#define BRAIN 8 // Slave Receiver address (M-Brain)
 #define MADDR 0 // M-Controller address
 #define MADDRSIZE 5 // addres size in bytes (5-bytes: 0 to 31)
-#define DEBUG 0
+#define BRAIN 8 // Slave Receiver address (M-Brain)
+#define NUMBYTES 2 // number of bytes using in communication from M-Controllers to M-Brain
+#define DEBUG 1
 
 char inputs[4] = {A0, A1, A2, A3}; // BUTTON PINS 
 byte leds[4] = {2, 3, 4, 7}; // LED PINS 
@@ -44,7 +44,7 @@ void loop() {
       digitalWrite(leds[i], toggle[i]);
       // prepare message to send through I2C
       message[0] = MADDR + (i << MADDRSIZE);
-      message[1] = toggle[i];
+      message[1] = toggle[i] * 127;
       // send I2C message      
       Wire.beginTransmission(BRAIN);
       Wire.write(message, NUMBYTES);
