@@ -9,6 +9,9 @@ The communication between modules is made using I2C (Inter-Integrated Circuit) u
 
 ## CHANGELOG
 
+### version 0.1.0 (protobrain)
+First working version for M-Brain protoype version (the version with LED's instead of a screen). 
+
 ### version 0.0.3 (gopro)
 As the code for M-Brain is getting bigger I moved the code development to Atmel Studio. In the 'firmware' folder should be a version to compile in Arduino IDE for those of you who don't have Atmel Studio. 
 
