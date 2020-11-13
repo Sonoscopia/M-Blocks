@@ -27,6 +27,7 @@
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
 #endif
 // DEFINITIONS
+#define BDRATE 115200
 #define ADDR 8 // this device address
 #define NUMBYTES 2 // number of bytes using in communication from M-Controllers to M-Brain
 #define PIN1 2 // rotary pins
@@ -37,6 +38,7 @@
 #define VMAP 0x14  // velocity map combo button code (NOTE + CC)
 #define CCMAP 0x15 // cc map button code 
 #define CHMAP 0x12 // channel map combo button code (NOTE + LOAD)
+#define GCHSET 0x10 // set global channel combo button code (NOTE + CC + LOAD)
 #define LOADB 0x13// load button code
 #define SAVEB 0x1F // save button code
 #define ENTER 0x07 //15: encoder button code 

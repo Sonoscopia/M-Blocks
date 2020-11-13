@@ -35,6 +35,7 @@
 
 //Beginning of Auto generated function prototypes by Atmel Studio
 void receiveI2C(int howmany);
+void resetMsg(); // reset I2C message
 void rotate();
 void timerISR();
 void michaelKnight(uint16_t t, boolean d);
@@ -47,7 +48,7 @@ Rotary rotary = Rotary(PIN1, PIN2);
 volatile byte counter = 0; // Counter that will be incremented or decremented by rotation.
 volatile boolean received = false; 
 byte message[NUMBYTES]; // used to read I2C message
-uint8_t maddr, mval; // easy access of I2C messages
+byte maddr, mval; // easy access of I2C messages
 
 // event mapping arrays (stored and recalled from EEPROM) 
 uint8_t chmap[128];
@@ -80,10 +81,10 @@ void setup() {
   
   // Debug
   if(PINC == ENTER){
-	Serial.begin(9600);
+	Serial.begin(BDRATE);
 	debug = true;
   }
-  else if(debug) { Serial.begin(115200); Serial.println("DEBUG MODE"); }
+  else if(debug) { Serial.begin(BDRATE); Serial.println("DEBUG MODE"); }
   
   // Midi  
   MIDI.begin(globalch);
@@ -134,10 +135,12 @@ void loop(){
 		//############### NOTE MAP ###############################################
 		case NMAP:
 			if(debug) Serial.println("NOTE MAP MODE");
-			counter = 0; // reset ENCODER value
+			if(notemap[maddr] > -1) counter = notemap[maddr]; // set ENCODER value
+			else counter = 0; 
+			
 			if (!received)
 			{
-				Timer1.initialize(BLINK2X);
+				Timer1.initialize(BLINK2X); 
 				Timer1.attachInterrupt( timerISR ); // blink LEDS 2x a second
 			}
 			
@@ -145,15 +148,140 @@ void loop(){
 				Timer1.detachInterrupt();
 				PORTF = counter; // display value
 				
-				if(PINC == ENTER) {
+				if(PINC == ENTER) { // STORE MAPPING
 					notemap[maddr] = counter; // store value in volatile memory (preset=0)
 					EEPROM.write(NOTEOFFSET + maddr, counter);
-					PORTF = 0x00; // turn all LEDS off
-					received = false;
+					resetMsg();
+				}
+				else{ 
+					if(PINC == LOADB) { // CANCEL
+						resetMsg();
+					}
 				}
 			}
-		break;
+			break;
 		
+		//############### VELOCITY MAP ###########################################
+		case VMAP:
+			if(debug) Serial.println("VELOCITY MAP MODE");
+			counter = velmap[maddr]; // set ENCODER value
+			
+			if (!received)
+			{
+				Timer1.initialize(BLINK4X);
+				Timer1.attachInterrupt( timerISR ); // blink LEDS 2x a second
+			}
+		
+			while(received){
+				Timer1.detachInterrupt();
+				PORTF = counter; // display value
+			
+				if(PINC == ENTER) {
+					velmap[maddr] = counter; // store value in volatile memory (preset=0)
+					EEPROM.write(VELOFFSET + maddr, counter);
+					resetMsg();
+				}
+				else{
+					if(PINC == LOADB) { // CANCEL
+						resetMsg();
+					}
+				}
+			}
+			break;
+		
+		//############### CC MAP #################################################
+		case CCMAP:
+			if(debug) Serial.println("CC MAP MODE");
+			if(ccmap[maddr] > -1) counter = ccmap[maddr]; // set ENCODER value
+			else counter = 0; 
+			
+			if (!received)
+			{
+				Timer1.initialize(BLINK2X);
+				Timer1.attachInterrupt( timerISR ); // blink LEDS 2x a second
+			}
+		
+			while(received){
+				Timer1.detachInterrupt();
+				PORTF = counter; // display value
+			
+				if(PINC == ENTER) {
+					ccmap[maddr] = counter; // store value in volatile memory (preset=0)
+					EEPROM.write(CCOFFSET + maddr, counter);
+					resetMsg();
+				}
+				else{
+					if(PINC == LOADB) { // CANCEL
+						resetMsg();
+					}
+				}
+			}
+			break;
+		
+		//############### CH MAP #################################################
+		case CHMAP:
+			if(debug) Serial.println("CHANNEL MAP MODE");
+			counter = chmap[maddr]; // set ENCODER value
+			
+			if (!received)
+			{
+				Timer1.initialize(BLINK4X);
+				Timer1.attachInterrupt( timerISR ); // blink LEDS 2x a second
+			}
+		
+			while(received){
+				Timer1.detachInterrupt();
+				if(counter > 16) counter = 0;
+				PORTF = counter; // display value
+			
+				if(PINC == ENTER) {
+					chmap[maddr] = counter; // store value in volatile memory (preset=0)
+					EEPROM.write(CHOFFSET + maddr, counter);
+					resetMsg();
+				}
+				else{
+					if(PINC == LOADB) { // CANCEL
+						resetMsg();
+					}
+				}
+			}
+			break;
+			
+			//############### SET GLOBAL CHANNEL #################################
+			case GCHSET:
+				if(debug) Serial.println("SET GLOBAL CHANNEL");
+				counter = globalch; // reset ENCODER value
+				if (!received)
+				{
+					Timer1.initialize(BLINK2X);
+					Timer1.attachInterrupt( timerISR ); // blink LEDS 2x a second
+				}
+			
+				while(received){
+					Timer1.detachInterrupt();
+					if(counter > 16) counter = 1;
+					if(counter < 1) counter = 16;
+					PORTF = counter; // display value
+				
+					if(PINC == ENTER) {
+						globalch = counter; // store value in volatile memory (preset=0)
+						PORTF = 0x00; // turn all LEDS off
+						received = false;
+					}
+					else{
+						if(PINC == LOADB) { // CANCEL
+							PORTF = 0x00; // turn all LEDS off
+							received = false;
+						}
+					}
+				}
+				break;
+				//############### LOAD PRESET ####################################
+				case  LOADB:
+					Timer1.detachInterrupt(); // turn leds off if mapping mode is engaged but is the cancelled after pressing LOAD
+					PORTF = 0x00; // turn all LEDS off
+				break;
+				
 		//############### PLAY MODE ##############################################
 		default: // no buttons pressed
 			if(received){ // if a message from a M-Controller is received
@@ -190,6 +318,16 @@ void receiveI2C(int howmany){
 		index++;
 	}
 	received = true;
+}
+
+// reset I2C message
+void resetMsg(){
+	PORTF = 0x00; // turn all LEDS off
+	received = false;
+	maddr = -1;
+	mval = -1;
+	message[0] = -1;
+	message[1] = -1; 
 }
 
 // rotate is called anytime the rotary inputs change state.
