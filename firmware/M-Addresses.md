@@ -5,4 +5,5 @@
 
 0: M-Toggle1
 1: M-Knob1
+2: M-Button1
 
