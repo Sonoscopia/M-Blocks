@@ -12,7 +12,7 @@
 #define MADDRSIZE 5 // addres size in bytes (5-bytes: 0 to 31)
 #define BRAIN 8 // Slave Receiver address (M-Brain)
 #define NUMBYTES 2 // number of bytes using in communication from M-Controllers to M-Brain
-#define DEBUG 0
+#define DEBUG 1
 
 char inputs[4] = {A0, A1, A2, A3}; // BUTTON PINS 
 byte leds[4] = {2, 3, 4, 7}; // LED PINS 
