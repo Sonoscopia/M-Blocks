@@ -17,8 +17,10 @@
 char inputs[4] = {A0, A1, A2, A3}; // BUTTON PINS 
 byte leds[4] = {2, 3, 4, 7}; // LED PINS 
 byte toggle[4] = {0, 0, 0, 0};
-boolean bstate[4] = {0, 0, 0, 0};
-boolean _bstate[4] = {1, 1, 1, 1};
+byte bstate[4] = {0, 0, 0, 0};
+byte _bstate[4] = {1, 1, 1, 1};
+long lastDebounceTime[4] = {0, 0, 0, 0};  // the last time the output pin was toggled
+long debounceDelay = 50;    // the debounce time; increase if the output flickers
 boolean changed = false; // used to check if toggles have changed 
 byte addr = MADDR;
 byte message[2] = {addr, toggle[0]};
@@ -38,7 +40,17 @@ void setup() {
 
 void loop() {
   for (int i = 0; i < 4; i++){
-    bstate[i] = digitalRead(inputs[i]);
+    //bstate[i] = digitalRead(inputs[i]);
+    bstate[i] = analogRead(inputs[i]) >> 9;
+    
+    if(bstate[i] < 1 && _bstate[i] > 0 ){ //if state changes
+      lastDebounceTime[i] = millis();    
+    }
+
+    if((millis() - lastDebounceTime[i]) > debounceDelay){
+      _bstate[i] = bstate[i];
+    }
+    
     if( bstate[i] < 1 && _bstate[i] > 0 ){ //if state changes
       toggle[i] = !toggle[i];
       digitalWrite(leds[i], toggle[i]);
