@@ -52,6 +52,11 @@
 #define	VELOFFSET 256
 #define CCOFFSET 384
 #define POFFSET 512 // preset offset
+// DEFAULT PRESET VALUES
+#define DEFAULTCH 0 // global channel
+#define DEFAULTNOTE 255 // no note mapping
+#define DEFAULTVEL 127 // maximum velocity
+#define DEFAULTCC 255 // no CC mapping
 // OTHER 
 #define LEDS 0b01111111
 #define BLINK2X 250000
