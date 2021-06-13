@@ -7,3 +7,4 @@
 1: M-Knob1
 2: M-Button1
 3: M-Fader1
+4: M-Joystick1
