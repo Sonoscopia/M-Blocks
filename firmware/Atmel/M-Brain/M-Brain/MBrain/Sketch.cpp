@@ -356,13 +356,13 @@ void loop(){
 				
 				if (notemap[maddr] > -1 ) // if there's a notemap stored
 				{
-					if(mval > 0) MIDI.sendNoteOn(notemap[maddr], velmap[maddr], globalch);
-					else MIDI.sendNoteOff(notemap[maddr], 0, globalch);
+					if(mval > 0) MIDI.sendNoteOn(notemap[maddr], velmap[maddr], ch);
+					else MIDI.sendNoteOff(notemap[maddr], 0, ch);
 				}
 				
 				if (ccmap[maddr] > -1 ) // if there's a ccmap stored
 				{
-					MIDI.sendControlChange(ccmap[maddr], mval, globalch);
+					MIDI.sendControlChange(ccmap[maddr], mval, ch);
 				}
 				
 				received = false; 
