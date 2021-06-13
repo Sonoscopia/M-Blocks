@@ -27,7 +27,6 @@
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
 #endif
 // DEFINITIONS
-#define BDRATE 115200
 #define ADDR 8 // this device address
 #define NUMBYTES 2 // number of bytes using in communication from M-Controllers to M-Brain
 #define PIN1 2 // rotary pins

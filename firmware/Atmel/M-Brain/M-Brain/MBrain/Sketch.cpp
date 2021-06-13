@@ -61,8 +61,6 @@ byte preset = 0; // current preset
 uint16_t loc = 0; // memory location
 boolean first = true; 
 
-boolean debug = false;
-
 void setup() {
   Wire.begin(ADDR); 
   Wire.onReceive(receiveI2C);
@@ -77,17 +75,9 @@ void setup() {
   PORTC = 0b00011111; // enable input pullup on pins 37 to 33
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, LOW);
-  
-  // Debug
-  if(PINC == ENTER){
-	Serial.begin(BDRATE);
-	debug = true;
-  }
-  //activates debug mode if variable is changed in code instead of activating debug mode through the interface at startup
-  else if(debug) { Serial.begin(BDRATE); Serial.println("DEBUG MODE"); } 
-	  
+  	  
   // Midi  
-  if(!debug) MIDI.begin(globalch);
+  MIDI.begin(globalch);
   
   // RESET PRESET MEMORY (see GLOBALS)
   if(PINC == RESET){
@@ -110,7 +100,6 @@ void setup() {
 		ccmap[i] = EEPROM.read(loc);
 	}
 	loc = 0; // reset memory location
-	if(debug) Serial.println("RESET preset 0");
 	michaelKnight(100, 1);
   }
   else{
@@ -122,7 +111,6 @@ void setup() {
 		  ccmap[i] = EEPROM.read(CCOFFSET +	i);
 	  }
 	  michaelKnight(100, 0);
-	  if(debug) Serial.println("LOADED preset 0");
   }
   
 }
@@ -131,15 +119,12 @@ void loop(){
 	if(received){
 		maddr = message[0]; // memory address (from 0 to 127, representing each controller of each M-Controller)
 		mval = message[1]; // controller value (ex: knob value, button, etc.)
-		if(debug){ Serial.print( "M-Controller ID:" ); Serial.println( get_maddr(maddr) ); Serial.print( "Controller#" );
-					Serial.print( get_ctrl(maddr) ); Serial.print( " = " ); Serial.println( mval );
-		}	
-	}
+	}	
+
 
 	switch(PINC){
 		//############### NOTE MAP ###############################################
 		case NMAP:
-			if(debug) Serial.println("NOTE MAP MODE");
 			if(notemap[maddr] < 128) counter = notemap[maddr]; // set ENCODER value
 			else counter = 0; 
 			
@@ -168,7 +153,6 @@ void loop(){
 		
 		//############### VELOCITY MAP ###########################################
 		case VMAP:
-			if(debug) Serial.println("VELOCITY MAP MODE");
 			counter = velmap[maddr]; // set ENCODER value
 			
 			if (!received)
@@ -195,9 +179,7 @@ void loop(){
 			break;
 		
 		//############### CC MAP #################################################
-		case CCMAP:
-			if(debug) Serial.println("CC MAP MODE");
-			
+		case CCMAP:			
 			if(ccmap[maddr] < 128) counter = ccmap[maddr]; // set ENCODER value
 			else counter = 0; 
 			
@@ -226,7 +208,6 @@ void loop(){
 		
 		//############### CH MAP #################################################
 		case CHMAP:
-			if(debug) Serial.println("CHANNEL MAP MODE");
 			counter = chmap[maddr]; // set ENCODER value
 			
 			if (!received)
@@ -255,7 +236,6 @@ void loop(){
 			
 			//############### SET GLOBAL CHANNEL #################################
 			case GCHSET:
-				if(debug) Serial.println("SET GLOBAL CHANNEL");
 				counter = globalch; // reset ENCODER value
 				if (!received)
 				{
@@ -271,13 +251,15 @@ void loop(){
 				
 					if(PINC == ENTER) {
 						globalch = counter; // store value in volatile memory (preset=0)
-						PORTF = 0x00; // turn all LEDS off
-						received = false;
+						resetMsg();
+						//PORTF = 0x00; // turn all LEDS off
+						//received = false;
 					}
 					else{
 						if(PINC == LOADB) { // CANCEL
-							PORTF = 0x00; // turn all LEDS off
-							received = false;
+							resetMsg();
+							//PORTF = 0x00; // turn all LEDS off
+							//received = false;
 						}
 					}
 				}
@@ -344,28 +326,25 @@ void loop(){
 				
 		//############### PLAY MODE ##############################################
 		default: // no buttons pressed
-			// =====> execPlay() function runs inside the I2C ISR to avoid processing messages while others are arriving in a different routine
-			
+			// PLAY MODE EXECUTION runs inside the I2C ISR to avoid processing messages while others are arriving in a different routine
+			first = true; // reset (used for LOAD/CANCEL behaviour)
+			preset = 0; // reset preset to 0 if all buttons are released
+			PORTF = 0x00; // turn all LED's off
 		break;
 	}
 }
 
 // called whenever an I2C message is received
 void receiveI2C(int howmany){
-	received = false;
-	
 	byte index = 0;
 	while(Wire.available()){
-		received = true;
 		byte v = Wire.read();
 		message[index] = v;
 		index++;
 	}
+	// PLAY MODE EXECUTION
+	// message[0] -> MController address (0..127), message[1] -> MController value (0..127)
 	if(PINC == PLAYMODE){
-		first = true; // reset (used for LOAD/CANCEL behaviour)
-		preset = 0; // reset preset to 0 if all buttons are released
-		PORTF = 0x00; // turn all LED's off
-
 		byte ch; // channel variable visible to PLAY MODE only
 			
 		if (chmap[message[0]] > 0 ) ch = chmap[message[0]];	// use chmap if there is one
@@ -381,48 +360,22 @@ void receiveI2C(int howmany){
 		{
 			MIDI.sendControlChange(ccmap[message[0]], message[1], ch);
 		}			
-	}
-	received = false;	
+	} 
+	
+	received = true;
 }
 
-void execPlay(){
-	if(PINC == PLAYMODE){
-		first = true; // reset (used for LOAD/CANCEL behaviour)
-		preset = 0; // reset preset to 0 if all buttons are released
-		PORTF = 0x00; // turn all LED's off
-		
-		if(received==true){ // if a message from a M-Controller is received
-			if(debug){ Serial.print("PLAY: "); Serial.print(maddr, BIN); Serial.print(" | "); Serial.println(mval); }
-			
-			byte ch; // channel variable visible to PLAY MODE only
-			
-			if (chmap[maddr] > 0 ) ch = chmap[maddr];	// use chmap if there is one
-			else ch = globalch; // if channel is 0 then use global channel
-			
-			if (notemap[maddr] < 128 && !debug) // if there's a notemap stored
-			{
-				if(mval > 0) MIDI.sendNoteOn(notemap[maddr], velmap[maddr], ch);
-				else MIDI.sendNoteOff(notemap[maddr], 0, ch);
-			}
-			
-			if (ccmap[maddr] < 128 && !debug) // if there's a ccmap stored
-			{
-				MIDI.sendControlChange(ccmap[maddr], mval, ch);
-			}
-			
-			received = false;
-		}
-	}
-}
 
 // reset I2C message
 void resetMsg(){
 	PORTF = 0x00; // turn all LEDS off
 	received = false;
-	maddr = 255;
-	mval = 255;
-	message[0] = 255;
-	message[1] = 255; 
+	//first = true; 
+	
+	//maddr = 255;
+	//mval = 255;
+	//message[0] = 255;
+	//message[1] = 255; 
 }
 
 // rotate is called anytime the rotary inputs change state.
