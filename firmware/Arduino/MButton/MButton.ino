@@ -12,10 +12,10 @@
 #define BIT(x)(0x01 << (x))
 
 #define MADDR 2 // M-Controller address
-#define MADDRSIZE 5 // addres size in bytes (5-bytes: 0 to 31)
+#define MADDRSIZE 5 // addres size in bits (5-bits: 0 to 31)
 #define BRAIN 8 // Slave Receiver address (M-Brain)
 #define NUMBYTES 2 // number of bytes using in communication from M-Controllers to M-Brain
-#define DEBUG 1
+#define DEBUG 0
 
 uint8_t state = 0b00001111; // PINC state (ANALOG INPUTS || watch out for A4/A5 ->used in I2C) 
 uint8_t prevState = state;

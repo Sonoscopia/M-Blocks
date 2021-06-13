@@ -9,7 +9,7 @@
 #include <Wire.h>
 
 #define MADDR 0 // M-Controller address
-#define MADDRSIZE 5 // addres size in bytes (5-bytes: 0 to 31)
+#define MADDRSIZE 5 // addres size in bits (5-bits: 0 to 31)
 #define BRAIN 8 // Slave Receiver address (M-Brain)
 #define NUMBYTES 2 // number of bytes using in communication from M-Controllers to M-Brain
 #define DEBUG 0

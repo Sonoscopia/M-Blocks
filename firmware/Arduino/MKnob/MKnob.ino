@@ -1,5 +1,5 @@
 /* 
- *  M-Button (Master Sender) using Arduino Pro Mini
+ *  M-Knob (Master Sender) using Arduino Pro Mini
  *  version 0.1.0
  *  
  *  Created: 12-11-2020
@@ -11,7 +11,7 @@
 #define NUMBYTES 2 // number of bytes using in communication from M-Controllers to M-Brain
 #define BRAIN 8 // Slave Receiver address (M-Brain)
 #define MADDR 1 // M-Controller address
-#define MADDRSIZE 5 // addres size in bytes (5-bytes: 0 to 31)
+#define MADDRSIZE 5 // addres size in bits (5-bits: 0 to 31)
 #define DEBUG 0
 
 char inputs[4] = {A0, A1, A2, A3}; // BUTTON PINS 
