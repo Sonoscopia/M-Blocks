@@ -97,16 +97,16 @@ void setup() {
 	for(int i = 0; i < 128; i++){
 		// reset channel map
 		chmap[i] = 0;
-		EEPROM.write(CHOFFSET + i, 0); 
+		EEPROM.update(CHOFFSET + i, 0); 
 		// reset notemap
 		notemap[i] = -1;
-		EEPROM.write(NOTEOFFSET + i, -1); 
+		EEPROM.update(NOTEOFFSET + i, -1); 
 		// reset velmap
 		velmap[i] = 127;
-		EEPROM.write(VELOFFSET + i, 127);
+		EEPROM.update(VELOFFSET + i, 127);
 		// reset ccmap
 		ccmap[i] = -1; 
-		EEPROM.write(CCOFFSET + i, -1); 
+		EEPROM.update(CCOFFSET + i, -1); 
 	}
 	if(debug) Serial.println("RESET preset 0");
 	michaelKnight(100, 1);
@@ -153,7 +153,7 @@ void loop(){
 				
 				if(PINC == ENTER) { // STORE MAPPING
 					notemap[maddr] = counter; // store value in volatile memory (preset=0)
-					EEPROM.write(NOTEOFFSET + maddr, counter);
+					EEPROM.update(NOTEOFFSET + maddr, counter);
 					resetMsg();
 				}
 				else{ 
@@ -181,7 +181,7 @@ void loop(){
 			
 				if(PINC == ENTER) {
 					velmap[maddr] = counter; // store value in volatile memory (preset=0)
-					EEPROM.write(VELOFFSET + maddr, counter);
+					EEPROM.update(VELOFFSET + maddr, counter);
 					resetMsg();
 				}
 				else{
@@ -211,7 +211,7 @@ void loop(){
 			
 				if(PINC == ENTER) {
 					ccmap[maddr] = counter; // store value in volatile memory (preset=0)
-					EEPROM.write(CCOFFSET + maddr, counter);
+					EEPROM.update(CCOFFSET + maddr, counter);
 					resetMsg();
 				}
 				else{
@@ -240,7 +240,7 @@ void loop(){
 			
 				if(PINC == ENTER) {
 					chmap[maddr] = counter; // store value in volatile memory (preset=0)
-					EEPROM.write(CHOFFSET + maddr, counter);
+					EEPROM.update(CHOFFSET + maddr, counter);
 					resetMsg();
 				}
 				else{
@@ -326,16 +326,16 @@ void loop(){
 					for(int i = 0; i < 128; i++){  
 						// save channel map
 						loc = (preset << 9) + CHOFFSET + i;
-						EEPROM.write(loc, chmap[i]);
+						EEPROM.update(loc, chmap[i]);
 						// save note map
 						loc = (preset << 9) + NOTEOFFSET + i;
-						EEPROM.write(loc, notemap[i]);
+						EEPROM.update(loc, notemap[i]);
 						// save velocity map
 						loc = (preset << 9) + VELOFFSET + i;
-						EEPROM.write(loc, velmap[i]);
+						EEPROM.update(loc, velmap[i]);
 						// save cc map
 						loc = (preset << 9) + CCOFFSET + i;
-						EEPROM.write(loc, ccmap[i]);
+						EEPROM.update(loc, ccmap[i]);
 					}
 					blinkConfirm();
 				break;
