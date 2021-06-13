@@ -4,7 +4,7 @@
 /*End of auto generated code by Atmel studio */
 
 /* 
- *	Version: 0.1.0 (protobrain)
+ *	Version: 0.1.1 (protobrain)
  *	Created: 12-11-2020
  *  Author: Tiago Ângelo (aka p1nh0)
 */
@@ -48,16 +48,16 @@ Rotary rotary = Rotary(PIN1, PIN2);
 
 volatile byte counter = 0; // Counter that will be incremented or decremented by rotation.
 volatile boolean received = false; 
-byte message[NUMBYTES]; // used to read I2C message
+volatile byte message[NUMBYTES]; // used to read I2C message
 byte maddr, mval; // easy access of I2C messages
 
 // event mapping arrays (stored and recalled from EEPROM) 
-uint8_t chmap[128];
-int8_t notemap[128];
-int8_t velmap[128];
-int8_t ccmap[128]; 
-uint8_t globalch = 1; // set global channel 
-uint8_t preset = 0; // current preset
+byte chmap[128];
+byte notemap[128];
+byte velmap[128];
+byte ccmap[128]; 
+byte globalch = 1; // set global channel 
+byte preset = 0; // current preset
 uint16_t loc = 0; // memory location
 boolean first = true; 
 
@@ -96,18 +96,23 @@ void setup() {
   if(PINC == RESET){
 	for(int i = 0; i < 128; i++){
 		// reset channel map
-		chmap[i] = 0;
-		EEPROM.update(CHOFFSET + i, 0); 
+		loc = CHOFFSET + i;
+		EEPROM.update(loc, DEFAULTCH); 
+		chmap[i] = EEPROM.read(loc);
 		// reset notemap
-		notemap[i] = -1;
-		EEPROM.update(NOTEOFFSET + i, -1); 
+		loc = NOTEOFFSET + i;
+		EEPROM.update(loc, DEFAULTNOTE); 
+		notemap[i] = EEPROM.read(loc);
 		// reset velmap
-		velmap[i] = 127;
-		EEPROM.update(VELOFFSET + i, 127);
+		loc = VELOFFSET + i;
+		EEPROM.update(loc, DEFAULTVEL);
+		velmap[i] = EEPROM.read(loc);
 		// reset ccmap
-		ccmap[i] = -1; 
-		EEPROM.update(CCOFFSET + i, -1); 
+		loc = CCOFFSET + i; 
+		EEPROM.update(loc, DEFAULTCC); 
+		ccmap[i] = EEPROM.read(loc);
 	}
+	loc = 0; // reset memory location
 	if(debug) Serial.println("RESET preset 0");
 	michaelKnight(100, 1);
   }
@@ -125,7 +130,7 @@ void setup() {
   
 }
 
-void loop(){
+void loop(){	
 	if(received){
 		maddr = message[0]; // memory address (from 0 to 127, representing each controller of each M-Controller)
 		mval = message[1]; // controller value (ex: knob value, button, etc.)
@@ -138,7 +143,7 @@ void loop(){
 		//############### NOTE MAP ###############################################
 		case NMAP:
 			if(debug) Serial.println("NOTE MAP MODE");
-			if(notemap[maddr] > -1) counter = notemap[maddr]; // set ENCODER value
+			if(notemap[maddr] < 128) counter = notemap[maddr]; // set ENCODER value
 			else counter = 0; 
 			
 			if (!received)
@@ -152,7 +157,7 @@ void loop(){
 				PORTF = counter; // display value
 				
 				if(PINC == ENTER) { // STORE MAPPING
-					notemap[maddr] = counter; // store value in volatile memory (preset=0)
+					notemap[maddr] = counter; // store value in memory (preset=0)
 					EEPROM.update(NOTEOFFSET + maddr, counter);
 					resetMsg();
 				}
@@ -180,7 +185,7 @@ void loop(){
 				PORTF = counter; // display value
 			
 				if(PINC == ENTER) {
-					velmap[maddr] = counter; // store value in volatile memory (preset=0)
+					velmap[maddr] = counter; // store value in memory (preset=0)
 					EEPROM.update(VELOFFSET + maddr, counter);
 					resetMsg();
 				}
@@ -196,7 +201,7 @@ void loop(){
 		case CCMAP:
 			if(debug) Serial.println("CC MAP MODE");
 			
-			if(ccmap[maddr] > -1) counter = ccmap[maddr]; // set ENCODER value
+			if(ccmap[maddr] < 128) counter = ccmap[maddr]; // set ENCODER value
 			else counter = 0; 
 			
 			if (!received)
@@ -210,7 +215,7 @@ void loop(){
 				PORTF = counter; // display value
 			
 				if(PINC == ENTER) {
-					ccmap[maddr] = counter; // store value in volatile memory (preset=0)
+					ccmap[maddr] = counter; // store value in memory (preset=0)
 					EEPROM.update(CCOFFSET + maddr, counter);
 					resetMsg();
 				}
@@ -239,7 +244,7 @@ void loop(){
 				PORTF = counter; // display value
 			
 				if(PINC == ENTER) {
-					chmap[maddr] = counter; // store value in volatile memory (preset=0)
+					chmap[maddr] = counter; // store value in memory (preset=0)
 					EEPROM.update(CHOFFSET + maddr, counter);
 					resetMsg();
 				}
@@ -346,21 +351,21 @@ void loop(){
 			preset = 0; // reset preset to 0 if all buttons are released
 			PORTF = 0x00; // turn all LED's off
 			
-			if(received){ // if a message from a M-Controller is received
+			if(received==true){ // if a message from a M-Controller is received
 				if(debug){ Serial.print("PLAY: "); Serial.print(maddr, BIN); Serial.print(" | "); Serial.println(mval); }
 		
-				uint8_t ch; // channel variable visible to PLAY MODE only
+				byte ch; // channel variable visible to PLAY MODE only
 				
 				if (chmap[maddr] > 0 ) ch = chmap[maddr];	// use chmap if there is one
 				else ch = globalch; // if channel is 0 then use global channel
 				
-				if (notemap[maddr] > -1 ) // if there's a notemap stored
+				if (notemap[maddr] < 128 ) // if there's a notemap stored
 				{
 					if(mval > 0) MIDI.sendNoteOn(notemap[maddr], velmap[maddr], ch);
 					else MIDI.sendNoteOff(notemap[maddr], 0, ch);
 				}
 				
-				if (ccmap[maddr] > -1 ) // if there's a ccmap stored
+				if (ccmap[maddr] < 128 ) // if there's a ccmap stored
 				{
 					MIDI.sendControlChange(ccmap[maddr], mval, ch);
 				}
@@ -373,23 +378,25 @@ void loop(){
 
 // called whenever an I2C message is received
 void receiveI2C(int howmany){
+	received = false;
 	byte index = 0;
 	while(Wire.available()){
 		byte v = Wire.read();
 		message[index] = v;
 		index++;
 	}
-	received = true;
+	received = true;	
+	
 }
 
 // reset I2C message
 void resetMsg(){
 	PORTF = 0x00; // turn all LEDS off
 	received = false;
-	maddr = -1;
-	mval = -1;
-	message[0] = -1;
-	message[1] = -1; 
+	maddr = 255;
+	mval = 255;
+	message[0] = 255;
+	message[1] = 255; 
 }
 
 // rotate is called anytime the rotary inputs change state.
