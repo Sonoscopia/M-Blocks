@@ -70,10 +70,6 @@ void setup() {
   // Rotary interrupts
   attachInterrupt(digitalPinToInterrupt(PIN1), rotate, CHANGE);
   attachInterrupt(digitalPinToInterrupt(PIN2), rotate, CHANGE);
-  if(debug) Serial.print("interrupt pin1: ");
-  if(debug) Serial.println(digitalPinToInterrupt(PIN1));
-  if(debug) Serial.print("interrupt pin2: ");
-  if(debug) Serial.println(digitalPinToInterrupt(PIN2));
   
   // Pin Setup
   DDRF = 0b11111111; // analog A0 to A6 as outputs (leds)
@@ -87,10 +83,11 @@ void setup() {
 	Serial.begin(BDRATE);
 	debug = true;
   }
-  else if(debug) { Serial.begin(BDRATE); Serial.println("DEBUG MODE"); }
-  
+  //activates debug mode if variable is changed in code instead of activating debug mode through the interface at startup
+  else if(debug) { Serial.begin(BDRATE); Serial.println("DEBUG MODE"); } 
+	  
   // Midi  
-  MIDI.begin(globalch);
+  if(!debug) MIDI.begin(globalch);
   
   // RESET PRESET MEMORY (see GLOBALS)
   if(PINC == RESET){
@@ -347,31 +344,8 @@ void loop(){
 				
 		//############### PLAY MODE ##############################################
 		default: // no buttons pressed
-			first = true; // reset (used for LOAD/CANCEL behaviour)
-			preset = 0; // reset preset to 0 if all buttons are released
-			PORTF = 0x00; // turn all LED's off
+			// =====> execPlay() function runs inside the I2C ISR to avoid processing messages while others are arriving in a different routine
 			
-			if(received==true){ // if a message from a M-Controller is received
-				if(debug){ Serial.print("PLAY: "); Serial.print(maddr, BIN); Serial.print(" | "); Serial.println(mval); }
-		
-				byte ch; // channel variable visible to PLAY MODE only
-				
-				if (chmap[maddr] > 0 ) ch = chmap[maddr];	// use chmap if there is one
-				else ch = globalch; // if channel is 0 then use global channel
-				
-				if (notemap[maddr] < 128 ) // if there's a notemap stored
-				{
-					if(mval > 0) MIDI.sendNoteOn(notemap[maddr], velmap[maddr], ch);
-					else MIDI.sendNoteOff(notemap[maddr], 0, ch);
-				}
-				
-				if (ccmap[maddr] < 128 ) // if there's a ccmap stored
-				{
-					MIDI.sendControlChange(ccmap[maddr], mval, ch);
-				}
-				
-				received = false; 
-			}
 		break;
 	}
 }
@@ -379,14 +353,66 @@ void loop(){
 // called whenever an I2C message is received
 void receiveI2C(int howmany){
 	received = false;
+	
 	byte index = 0;
 	while(Wire.available()){
+		received = true;
 		byte v = Wire.read();
 		message[index] = v;
 		index++;
 	}
-	received = true;	
-	
+	if(PINC == PLAYMODE){
+		first = true; // reset (used for LOAD/CANCEL behaviour)
+		preset = 0; // reset preset to 0 if all buttons are released
+		PORTF = 0x00; // turn all LED's off
+
+		byte ch; // channel variable visible to PLAY MODE only
+			
+		if (chmap[message[0]] > 0 ) ch = chmap[message[0]];	// use chmap if there is one
+		else ch = globalch; // if channel is 0 then use global channel
+			
+		if (notemap[message[0]] < 128) // if there's a notemap stored
+		{
+			if(message[1] > 0) MIDI.sendNoteOn(notemap[message[0]], velmap[message[0]], ch);
+			else MIDI.sendNoteOff(notemap[message[0]], 0, ch);
+		}
+			
+		if (ccmap[message[0]] < 128) // if there's a ccmap stored
+		{
+			MIDI.sendControlChange(ccmap[message[0]], message[1], ch);
+		}			
+	}
+	received = false;	
+}
+
+void execPlay(){
+	if(PINC == PLAYMODE){
+		first = true; // reset (used for LOAD/CANCEL behaviour)
+		preset = 0; // reset preset to 0 if all buttons are released
+		PORTF = 0x00; // turn all LED's off
+		
+		if(received==true){ // if a message from a M-Controller is received
+			if(debug){ Serial.print("PLAY: "); Serial.print(maddr, BIN); Serial.print(" | "); Serial.println(mval); }
+			
+			byte ch; // channel variable visible to PLAY MODE only
+			
+			if (chmap[maddr] > 0 ) ch = chmap[maddr];	// use chmap if there is one
+			else ch = globalch; // if channel is 0 then use global channel
+			
+			if (notemap[maddr] < 128 && !debug) // if there's a notemap stored
+			{
+				if(mval > 0) MIDI.sendNoteOn(notemap[maddr], velmap[maddr], ch);
+				else MIDI.sendNoteOff(notemap[maddr], 0, ch);
+			}
+			
+			if (ccmap[maddr] < 128 && !debug) // if there's a ccmap stored
+			{
+				MIDI.sendControlChange(ccmap[maddr], mval, ch);
+			}
+			
+			received = false;
+		}
+	}
 }
 
 // reset I2C message
