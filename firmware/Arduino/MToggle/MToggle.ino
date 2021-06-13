@@ -26,7 +26,7 @@ byte message[2] = {addr, toggle[0]};
 
 void setup() {
   Wire.begin();// join i2c bus (address optional for master)
-  if(DEBUG) Serial.begin(9600);
+  if(DEBUG) Serial.begin(115200);
   
   // hardware setup
   for (int i = 0; i < 4; i++){

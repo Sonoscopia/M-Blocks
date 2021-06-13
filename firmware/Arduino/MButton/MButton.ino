@@ -31,7 +31,7 @@ long debounceDelay = 10;    // the debounce time; increase if the output flicker
 
 void setup() {
   Wire.begin();// join i2c bus (address optional for master)
-  if(DEBUG) Serial.begin(9600);
+  if(DEBUG) Serial.begin(115200);
   
   // hardware setup
   pinMode(A0, INPUT_PULLUP);
