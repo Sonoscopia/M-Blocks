@@ -1,7 +1,10 @@
 # TO DO 
 
-- test M-Fader1
-- make M-Button firmware (using debounce?)
-- remake M-Toggle firmware (using debounce?)
-- test M-Button1 and M-Toggle1 
+- hardware fix on M-Brain: protect TRRS sockets from delivering 12V to the I2C SCL and SDA connections when connecting cables after the unit is already powered
+- (hardware) fix M-Fader and M-Knob
+- make code for: M-Encoders and M-Trackpad
+- implement USB MIDI 
 
+# NOTES
+
+- the M-Encoder board is a bit messy
