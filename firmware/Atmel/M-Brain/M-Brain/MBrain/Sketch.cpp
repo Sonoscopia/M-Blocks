@@ -49,7 +49,6 @@ Rotary rotary = Rotary(PIN1, PIN2);
 volatile byte counter = 0; // Counter that will be incremented or decremented by rotation.
 volatile boolean received = false; 
 volatile byte message[NUMBYTES]; // used to read I2C message
-byte maddr, mval; // easy access of I2C messages
 
 // event mapping arrays (stored and recalled from EEPROM) 
 byte chmap[128];
@@ -116,16 +115,10 @@ void setup() {
 }
 
 void loop(){	
-	if(received){
-		maddr = message[0]; // memory address (from 0 to 127, representing each controller of each M-Controller)
-		mval = message[1]; // controller value (ex: knob value, button, etc.)
-	}	
-
-
 	switch(PINC){
 		//############### NOTE MAP ###############################################
 		case NMAP:
-			if(notemap[maddr] < 128) counter = notemap[maddr]; // set ENCODER value
+			if(notemap[message[0]] < 128) counter = notemap[message[0]]; // set ENCODER value
 			else counter = 0; 
 			
 			if (!received)
@@ -139,8 +132,8 @@ void loop(){
 				PORTF = counter; // display value
 				
 				if(PINC == ENTER) { // STORE MAPPING
-					notemap[maddr] = counter; // store value in memory (preset=0)
-					EEPROM.update(NOTEOFFSET + maddr, counter);
+					notemap[message[0]] = counter; // store value in memory (preset=0)
+					EEPROM.update(NOTEOFFSET + message[0], counter);
 					resetMsg();
 				}
 				else{ 
@@ -153,7 +146,7 @@ void loop(){
 		
 		//############### VELOCITY MAP ###########################################
 		case VMAP:
-			counter = velmap[maddr]; // set ENCODER value
+			counter = velmap[message[0]]; // set ENCODER value
 			
 			if (!received)
 			{
@@ -166,8 +159,8 @@ void loop(){
 				PORTF = counter; // display value
 			
 				if(PINC == ENTER) {
-					velmap[maddr] = counter; // store value in memory (preset=0)
-					EEPROM.update(VELOFFSET + maddr, counter);
+					velmap[message[0]] = counter; // store value in memory (preset=0)
+					EEPROM.update(VELOFFSET + message[0], counter);
 					resetMsg();
 				}
 				else{
@@ -180,7 +173,7 @@ void loop(){
 		
 		//############### CC MAP #################################################
 		case CCMAP:			
-			if(ccmap[maddr] < 128) counter = ccmap[maddr]; // set ENCODER value
+			if(ccmap[message[0]] < 128) counter = ccmap[message[0]]; // set ENCODER value
 			else counter = 0; 
 			
 			if (!received)
@@ -194,8 +187,8 @@ void loop(){
 				PORTF = counter; // display value
 			
 				if(PINC == ENTER) {
-					ccmap[maddr] = counter; // store value in memory (preset=0)
-					EEPROM.update(CCOFFSET + maddr, counter);
+					ccmap[message[0]] = counter; // store value in memory (preset=0)
+					EEPROM.update(CCOFFSET + message[0], counter);
 					resetMsg();
 				}
 				else{
@@ -208,7 +201,7 @@ void loop(){
 		
 		//############### CH MAP #################################################
 		case CHMAP:
-			counter = chmap[maddr]; // set ENCODER value
+			counter = chmap[message[0]]; // set ENCODER value
 			
 			if (!received)
 			{
@@ -222,8 +215,8 @@ void loop(){
 				PORTF = counter; // display value
 			
 				if(PINC == ENTER) {
-					chmap[maddr] = counter; // store value in memory (preset=0)
-					EEPROM.update(CHOFFSET + maddr, counter);
+					chmap[message[0]] = counter; // store value in memory (preset=0)
+					EEPROM.update(CHOFFSET + message[0], counter);
 					resetMsg();
 				}
 				else{
@@ -359,7 +352,9 @@ void receiveI2C(int howmany){
 		if (ccmap[message[0]] < 128) // if there's a ccmap stored
 		{
 			MIDI.sendControlChange(ccmap[message[0]], message[1], ch);
-		}			
+		}
+		
+		received = false; // clear flag	
 	} 
 	
 	received = true;
@@ -371,11 +366,6 @@ void resetMsg(){
 	PORTF = 0x00; // turn all LEDS off
 	received = false;
 	//first = true; 
-	
-	//maddr = 255;
-	//mval = 255;
-	//message[0] = 255;
-	//message[1] = 255; 
 }
 
 // rotate is called anytime the rotary inputs change state.
