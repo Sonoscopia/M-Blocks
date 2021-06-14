@@ -16,6 +16,10 @@
 
 - implement USB MIDI 
 
+- buy/apply rubber feet to the cases
+
+- buy/apply velcro on the M-Fader faders
+
 
 # NOTES
 
