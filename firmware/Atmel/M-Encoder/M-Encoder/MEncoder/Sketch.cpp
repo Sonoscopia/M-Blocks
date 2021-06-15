@@ -52,11 +52,34 @@ void setup() {
   
   // set mode (encoder+button behaviour)
   byte p = PINC << 4; // read A0 to A3 and bitshift to ignore A4 to A7 
-  switch(PINC){
+  switch(p){
 	  case MODE1:
+		mode = MODE1;
+		EEPROM.update(MLOC, mode);
+		if(DEBUG){ Serial.print("mode = "); Serial.println(mode, HEX);}
+	  break;
+	  
+	  case MODE2:
+		mode = MODE2;
+		EEPROM.update(MLOC, mode);
+		if(DEBUG){ Serial.print("mode = "); Serial.println(mode, HEX);}
+	  break;
+	  
+	  case MODE3:
+		mode = MODE3;
+		EEPROM.update(MLOC, mode);
+		if(DEBUG){ Serial.print("mode = "); Serial.println(mode, HEX);}
+	  break;
+	  
+	  case MODE4:
+		mode = MODE4;
+		EEPROM.update(MLOC, mode);
+		if(DEBUG){ Serial.print("mode = "); Serial.println(mode, HEX);}
 	  break;
 	  
 	  default:
+		mode = EEPROM.read(MLOC);
+		if(DEBUG){ Serial.print("mode = "); Serial.println(mode, HEX);}
 	  break;
   }	    
 }

@@ -13,7 +13,7 @@
 #define MADDRSIZE 5 // addres size in bits (5-bits: 0 to 31)
 #define BRAIN 8 // Slave Receiver address (M-Brain)
 #define NUMBYTES 2 // number of bytes using in communication from M-Controllers to M-Brain
-#define DEBUG 0
+#define DEBUG 1
 
 // encoder+button behaviour, set at setup()
 #define MODE1 0xe0 // button pressed + encoder = encoder value x2 (default)
@@ -22,7 +22,7 @@
 #define MODE4 0x70 // button pressed = "note out" to a separate M-Controller ID (=MADDR+1)
 // to engage mode1 keep encoder button1 pressed and then power the unit
 // press button2 for mode2, etc....
-// mode is store on EEPROM address 0
+#define MLOC 0 // mode is stored on EEPROM address 0
 
 
 
