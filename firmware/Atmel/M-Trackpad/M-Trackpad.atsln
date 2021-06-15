@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Atmel Studio Solution File, Format Version 11.00
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "MTrackpad", "M-Trackpad\MTrackpad\MTrackpad.cppproj", "{DCE6C7E3-EE26-4D79-826B-08594B9AD897}"
+EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "ArduinoCore", "M-Trackpad\ArduinoCore\ArduinoCore.cppproj", "{1F7B1C84-7D8A-4C82-B1EB-B7EDE7E40BCB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.ActiveCfg = Debug|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.Build.0 = Debug|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.ActiveCfg = Release|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.Build.0 = Release|AVR
+		{1F7B1C84-7D8A-4C82-B1EB-B7EDE7E40BCB}.Debug|AVR.ActiveCfg = Debug|AVR
+		{1F7B1C84-7D8A-4C82-B1EB-B7EDE7E40BCB}.Debug|AVR.Build.0 = Debug|AVR
+		{1F7B1C84-7D8A-4C82-B1EB-B7EDE7E40BCB}.Release|AVR.ActiveCfg = Release|AVR
+		{1F7B1C84-7D8A-4C82-B1EB-B7EDE7E40BCB}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
