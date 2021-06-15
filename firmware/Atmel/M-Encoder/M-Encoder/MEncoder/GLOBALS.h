@@ -14,7 +14,7 @@
 #define MADDRSIZE 5 // addres size in bits (5-bits: 0 to 31)
 #define BRAIN 8 // Slave Receiver address (M-Brain)
 #define NUMBYTES 2 // number of bytes using in communication from M-Controllers to M-Brain
-#define DEBUG 1
+#define DEBUG 0
 
 // encoder+button behaviour, set at setup()
 #define MODE1 0xe0 // button pressed + encoder = encoder value increment=M1_INC (default)

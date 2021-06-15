@@ -89,30 +89,32 @@ void setup() {
 	}	    
 }
 
-/*void loop() {
-	for(int i = 0; i < 4; i++){
-		// read rotary encoders
-		volatile unsigned char result = encoder[i].process();
-		if (result == DIR_CW && counter[i] < 127) {
-			counter[i]++;
-			if(DEBUG) printEncoder(i, counter[i]);
-		} else if (result == DIR_CCW && counter[i] >0) {
-			counter[i]--;
-			printEncoder(i, counter[i]);
-		}
-	
-		// read rotary buttons
-		buttons[i] = 1 - (analogRead(inputs[i])>>9); //read current button state
-		if(buttons[i] != _buttons[i]){
-			_buttons[i] = buttons[i];
-			if(DEBUG) printButton(i, buttons[i]);
-		}
-	}
-}*/
-
 void loop(){
 	switch(mode){
-		case(MODE3): // pressing the encoder button toggles the value from 
+		case(MODE4): // pressing the encoder button sends values as another address (MADDR_N instead of MADDR) just like a MIDI keyboard press
+		for(int i = 0; i < 4; i++){
+			// READ ENCODER BUTTONS
+			buttons[i] = 1 - (analogRead(inputs[i])>>9); //read current button state
+			if(buttons[i] != _buttons[i]){
+				_buttons[i] = buttons[i];
+				if(DEBUG) printButton(i, buttons[i]*127);
+				sendMessage(MADDR_N, buttons[i]*127, i);						// SEND I2C MESSAGE
+			}
+			// READ ENCODERS
+			volatile unsigned char result = encoder[i].process();
+			if (result == DIR_CW && counter[i] < 127) {
+				counter[i]++;
+				if(DEBUG) printEncoder(i, counter[i]);
+				sendMessage(MADDR, counter[i], i);						// SEND I2C MESSAGE
+				} else if (result == DIR_CCW && counter[i] >0) {
+				counter[i]--;
+				printEncoder(i, counter[i]);
+				sendMessage(MADDR, counter[i], i);						// SEND I2C MESSAGE
+			}
+		}
+		break;
+		
+		case(MODE3): // pressing the encoder button toggles the value from 0 to 127
 			for(int i = 0; i < 4; i++){
 				// READ ENCODER BUTTONS
 				buttons[i] = 1 - (analogRead(inputs[i])>>9); //read current button state
