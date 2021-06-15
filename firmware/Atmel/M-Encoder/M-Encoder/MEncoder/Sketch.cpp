@@ -3,18 +3,24 @@
 
 /*End of auto generated code by Atmel studio */
 
-/* Tester for M-Enc-C and M-Enc-D
- * this test uses the 'poll' method
- * it also tests the encoder buttons
- */
+/* M-Encoder (Master Sender) using Arduino Pro Mini
+*  version 0.1.1
+*
+*  Created: 15-06-2021
+*  Author: Tiago Ângelo (aka p1nh0)
+* 
+* It is the same code for M-Enc-C (continuous encoders) and M-Enc-D (detent encoders) 
+*/
 
+#include <Wire.h>
+#include <EEPROM.h>
 #include <Rotary.h>
+#include "GLOBALS.h"
+
 //Beginning of Auto generated function prototypes by Atmel Studio
 void printEncoder(int j, byte c);
 void printButton(int j, byte c);
 //End of Auto generated function prototypes by Atmel Studio
-
-
 
 // rotary encoder pins
 byte encA[4] = {3, 7, 11, 13};
@@ -34,12 +40,25 @@ volatile byte counter[4] = {0, 0, 0, 0};
 byte buttons[4] = {0, 0, 0, 0};
 byte _buttons[4] = {0, 0, 0, 0};
 
+byte mode;
+
 void setup() {
-  Serial.begin(9600);
+  if(DEBUG) Serial.begin(9600);
+  
   // button setup
   for(int i = 0; i < 4; i++){
     pinMode(inputs[i], INPUT_PULLUP);
-  }  
+  }
+  
+  // set mode (encoder+button behaviour)
+  byte p = PINC << 4; // read A0 to A3 and bitshift to ignore A4 to A7 
+  switch(PINC){
+	  case MODE1:
+	  break;
+	  
+	  default:
+	  break;
+  }	    
 }
 
 void loop() {
@@ -48,16 +67,17 @@ void loop() {
     volatile unsigned char result = encoder[i].process();
     if (result == DIR_CW && counter[i] < 127) {
       counter[i]++;
-      printEncoder(i, counter[i]);
+      if(DEBUG) printEncoder(i, counter[i]);
     } else if (result == DIR_CCW && counter[i] >0) {
       counter[i]--;
       printEncoder(i, counter[i]);
     }
+	
     // read rotary buttons
     buttons[i] = 1 - (analogRead(inputs[i])>>9); //read current button state
     if(buttons[i] != _buttons[i]){
       _buttons[i] = buttons[i];
-      printButton(i, buttons[i]);
+      if(DEBUG) printButton(i, buttons[i]);
     }
   }
 }

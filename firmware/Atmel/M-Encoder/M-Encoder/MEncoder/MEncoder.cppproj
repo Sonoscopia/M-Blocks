@@ -4,20 +4,19 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>7.0</ProjectVersion>
     <ToolchainName>com.Atmel.AVRGCC8.CPP</ToolchainName>
-    <ProjectGuid>6632e886-b422-44d6-9cfc-49437650006c</ProjectGuid>
+    <ProjectGuid>dce6c7e3-ee26-4d79-826b-08594b9ad897</ProjectGuid>
     <avrdevice>atmega328p</avrdevice>
     <avrdeviceseries>none</avrdeviceseries>
-    <OutputType>StaticLibrary</OutputType>
+    <OutputType>Executable</OutputType>
     <Language>CPP</Language>
-    <OutputFileName>lib$(MSBuildProjectName)</OutputFileName>
-    <OutputFileExtension>.a</OutputFileExtension>
+    <OutputFileName>$(MSBuildProjectName)</OutputFileName>
+    <ArduinoProjectType>Sketch</ArduinoProjectType>
+    <OutputFileExtension>.elf</OutputFileExtension>
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
-    <Name>ArduinoCore</Name>
+    <Name>MEncoder</Name>
+    <RootNamespace>MEncoder</RootNamespace>
     <ArduinoIdeDir>C:\Program Files (x86)\Arduino</ArduinoIdeDir>
-    <ArduinoProjectType>Core</ArduinoProjectType>
     <ToolchainFlavour>Native</ToolchainFlavour>
-    <AssemblyName>ArduinoCore</AssemblyName>
-    <RootNamespace>ArduinoCore</RootNamespace>
     <KeepTimersRunning>true</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
     <CacheFlash>true</CacheFlash>
@@ -27,8 +26,9 @@
     <preserveEEPROM>true</preserveEEPROM>
     <OverrideVtorValue />
     <BootSegment>2</BootSegment>
+    <eraseonlaunchrule>1</eraseonlaunchrule>
+    <AssemblyName>MEncoder</AssemblyName>
     <ResetRule>0</ResetRule>
-    <eraseonlaunchrule>0</eraseonlaunchrule>
     <EraseKey />
     <AsfFrameworkConfig>
       <framework-data xmlns="">
@@ -66,10 +66,14 @@
   <avrgcc.compiler.directories.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
-      <Value>..\include\libraries\rotary</Value>
-      <Value>..\include\core</Value>
-      <Value>..\include\variants\eightanaloginputs</Value>
-      <Value>..\include\variants\standard</Value>
+      <Value>%24(ProjectDir)\..\ArduinoCore\include\core</Value>
+      <Value>%24(ProjectDir)\..\ArduinoCore\include\libraries\rotary</Value>
+      <Value>%24(ProjectDir)\..\ArduinoCore\include\variants\eightanaloginputs</Value>
+      <Value>%24(ProjectDir)\..\ArduinoCore\include\variants\standard</Value>
+      <Value>..\include\libraries\Rotary</Value>
+      <Value>..\include\libraries\EEPROM</Value>
+      <Value>..\include\libraries\Wire</Value>
+      <Value>..\include\libraries\Wire\utility</Value>
     </ListValues>
   </avrgcc.compiler.directories.IncludePaths>
   <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
@@ -93,10 +97,14 @@
   <avrgcccpp.compiler.directories.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
-      <Value>..\include\libraries\rotary</Value>
-      <Value>..\include\core</Value>
-      <Value>..\include\variants\eightanaloginputs</Value>
-      <Value>..\include\variants\standard</Value>
+      <Value>%24(ProjectDir)\..\ArduinoCore\include\core</Value>
+      <Value>%24(ProjectDir)\..\ArduinoCore\include\libraries\rotary</Value>
+      <Value>%24(ProjectDir)\..\ArduinoCore\include\variants\eightanaloginputs</Value>
+      <Value>%24(ProjectDir)\..\ArduinoCore\include\variants\standard</Value>
+      <Value>..\include\libraries\Rotary</Value>
+      <Value>..\include\libraries\EEPROM</Value>
+      <Value>..\include\libraries\Wire</Value>
+      <Value>..\include\libraries\Wire\utility</Value>
     </ListValues>
   </avrgcccpp.compiler.directories.IncludePaths>
   <avrgcccpp.compiler.optimization.level>Optimize for size (-Os)</avrgcccpp.compiler.optimization.level>
@@ -144,10 +152,14 @@
   <avrgcc.compiler.directories.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
-      <Value>..\include\libraries\rotary</Value>
-      <Value>..\include\core</Value>
-      <Value>..\include\variants\eightanaloginputs</Value>
-      <Value>..\include\variants\standard</Value>
+      <Value>%24(ProjectDir)\..\ArduinoCore\include\core</Value>
+      <Value>%24(ProjectDir)\..\ArduinoCore\include\libraries\rotary</Value>
+      <Value>%24(ProjectDir)\..\ArduinoCore\include\variants\eightanaloginputs</Value>
+      <Value>%24(ProjectDir)\..\ArduinoCore\include\variants\standard</Value>
+      <Value>..\include\libraries\Rotary</Value>
+      <Value>..\include\libraries\EEPROM</Value>
+      <Value>..\include\libraries\Wire</Value>
+      <Value>..\include\libraries\Wire\utility</Value>
     </ListValues>
   </avrgcc.compiler.directories.IncludePaths>
   <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
@@ -171,10 +183,14 @@
   <avrgcccpp.compiler.directories.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.150\include</Value>
-      <Value>..\include\libraries\rotary</Value>
-      <Value>..\include\core</Value>
-      <Value>..\include\variants\eightanaloginputs</Value>
-      <Value>..\include\variants\standard</Value>
+      <Value>%24(ProjectDir)\..\ArduinoCore\include\core</Value>
+      <Value>%24(ProjectDir)\..\ArduinoCore\include\libraries\rotary</Value>
+      <Value>%24(ProjectDir)\..\ArduinoCore\include\variants\eightanaloginputs</Value>
+      <Value>%24(ProjectDir)\..\ArduinoCore\include\variants\standard</Value>
+      <Value>..\include\libraries\Rotary</Value>
+      <Value>..\include\libraries\EEPROM</Value>
+      <Value>..\include\libraries\Wire</Value>
+      <Value>..\include\libraries\Wire\utility</Value>
     </ListValues>
   </avrgcccpp.compiler.directories.IncludePaths>
   <avrgcccpp.compiler.optimization.level>Optimize for size (-Os)</avrgcccpp.compiler.optimization.level>
@@ -200,161 +216,55 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="include\core\Arduino.h">
+    <Compile Include="GLOBALS.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\core\binary.h">
+    <Compile Include="include\libraries\EEPROM\EEPROM.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\core\Client.h">
+    <Compile Include="include\libraries\Rotary\Rotary.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\core\HardwareSerial.h">
+    <Compile Include="include\libraries\Wire\utility\twi.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\core\HardwareSerial_private.h">
+    <Compile Include="include\libraries\Wire\Wire.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\core\IPAddress.h">
+    <Compile Include="Sketch.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\core\new.h">
+    <Compile Include="src\libraries\Rotary\Rotary.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\core\Print.h">
+    <Compile Include="src\libraries\Wire\utility\twi.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\core\Printable.h">
+    <Compile Include="src\libraries\Wire\Wire.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\core\Server.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\core\Stream.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\core\Udp.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\core\USBAPI.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\core\USBCore.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\core\USBDesc.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\core\WCharacter.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\core\wiring_private.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\core\WString.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\libraries\rotary\Rotary.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\variants\eightanaloginputs\pins_arduino.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\variants\standard\pins_arduino.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\abi.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\CDC.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\HardwareSerial.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\HardwareSerial0.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\HardwareSerial1.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\HardwareSerial2.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\HardwareSerial3.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\HID.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\hooks.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\IPAddress.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\main.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\new.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\PreprocessingAssembly\wiring_pulse.S">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\Print.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\Stream.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\Tone.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\USBCore.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\WInterrupts.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\wiring.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\wiring_analog.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\wiring_digital.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\wiring_pulse.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\wiring_shift.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\WMath.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\WString.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\libraries\rotary\Rotary.cpp">
-      <SubType>compile</SubType>
-    </Compile>
+    <Content Include="readme.html">
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ArduinoCore\ArduinoCore.cppproj">
+      <Name>ArduinoCore</Name>
+      <Project>43c6556d-aa6e-4ce0-b121-93c7325c5b5c</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="include\" />
-    <Folder Include="include\core\" />
     <Folder Include="include\libraries\" />
-    <Folder Include="include\libraries\rotary\" />
-    <Folder Include="include\variants\" />
-    <Folder Include="include\variants\eightanaloginputs\" />
-    <Folder Include="include\variants\standard\" />
+    <Folder Include="include\libraries\EEPROM\" />
+    <Folder Include="include\libraries\Rotary\" />
+    <Folder Include="include\libraries\Wire\" />
+    <Folder Include="include\libraries\Wire\utility\" />
     <Folder Include="src\" />
-    <Folder Include="src\core\" />
-    <Folder Include="src\core\PreprocessingAssembly\" />
     <Folder Include="src\libraries\" />
-    <Folder Include="src\libraries\rotary\" />
+    <Folder Include="src\libraries\Rotary\" />
+    <Folder Include="src\libraries\Wire\" />
+    <Folder Include="src\libraries\Wire\utility\" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

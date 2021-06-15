@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Atmel Studio Solution File, Format Version 11.00
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "M-Encoders_tester", "M-Encoder-C\M-Encoders_tester\M-Encoders_tester.cppproj", "{DCE6C7E3-EE26-4D79-826B-08594B9AD897}"
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "MEncoder", "M-Encoder\MEncoder\MEncoder.cppproj", "{DCE6C7E3-EE26-4D79-826B-08594B9AD897}"
 EndProject
-Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "ArduinoCore", "M-Encoder-C\ArduinoCore\ArduinoCore.cppproj", "{6632E886-B422-44D6-9CFC-49437650006C}"
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "ArduinoCore", "M-Encoder\ArduinoCore\ArduinoCore.cppproj", "{43C6556D-AA6E-4CE0-B121-93C7325C5B5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.Build.0 = Debug|AVR
 		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.ActiveCfg = Release|AVR
 		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.Build.0 = Release|AVR
-		{6632E886-B422-44D6-9CFC-49437650006C}.Debug|AVR.ActiveCfg = Debug|AVR
-		{6632E886-B422-44D6-9CFC-49437650006C}.Debug|AVR.Build.0 = Debug|AVR
-		{6632E886-B422-44D6-9CFC-49437650006C}.Release|AVR.ActiveCfg = Release|AVR
-		{6632E886-B422-44D6-9CFC-49437650006C}.Release|AVR.Build.0 = Release|AVR
+		{43C6556D-AA6E-4CE0-B121-93C7325C5B5C}.Debug|AVR.ActiveCfg = Debug|AVR
+		{43C6556D-AA6E-4CE0-B121-93C7325C5B5C}.Debug|AVR.Build.0 = Debug|AVR
+		{43C6556D-AA6E-4CE0-B121-93C7325C5B5C}.Release|AVR.ActiveCfg = Release|AVR
+		{43C6556D-AA6E-4CE0-B121-93C7325C5B5C}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
