@@ -36,84 +36,159 @@ Rotary encoder[4] = {
   Rotary(encA[3], encB[3]),
   };
 
-volatile byte counter[4] = {0, 0, 0, 0}; 
-byte buttons[4] = {0, 0, 0, 0};
+volatile byte counter[4] = {0, 0, 0, 0}; // encoders' values
+byte buttons[4] = {0, 0, 0, 0}; // encoders' button press
 byte _buttons[4] = {0, 0, 0, 0};
+byte toggles[4] = {0, 0, 0, 0}; // exclusive of mode3 (toggles value between 0 and 127)
+byte _toggles[4] = {0, 0, 0, 0}; 
+
 
 byte mode;
+byte message[2] = {MADDR, counter[0]};
 
 void setup() {
-  if(DEBUG) Serial.begin(9600);
+	Wire.begin();// join i2c bus (address optional for master)
+	if(DEBUG) Serial.begin(9600);
   
-  // button setup
-  for(int i = 0; i < 4; i++){
-    pinMode(inputs[i], INPUT_PULLUP);
-  }
+	// button setup
+	for(int i = 0; i < 4; i++){
+		pinMode(inputs[i], INPUT_PULLUP);
+	}
   
-  // set mode (encoder+button behaviour)
-  byte p = PINC << 4; // read A0 to A3 and bitshift to ignore A4 to A7 
-  switch(p){
-	  case MODE1:
-		mode = MODE1;
-		EEPROM.update(MLOC, mode);
-		if(DEBUG){ Serial.print("mode = "); Serial.println(mode, HEX);}
-	  break;
+	// set mode (encoder+button behaviour)
+	byte p = PINC << 4; // read A0 to A3 and bitshift to ignore A4 to A7 
+	switch(p){
+		case MODE1:
+			mode = MODE1;
+			EEPROM.update(MLOC, mode);
+			if(DEBUG){ Serial.print("mode = "); Serial.println(mode, HEX);}
+		break;
 	  
-	  case MODE2:
-		mode = MODE2;
-		EEPROM.update(MLOC, mode);
-		if(DEBUG){ Serial.print("mode = "); Serial.println(mode, HEX);}
-	  break;
+		case MODE2:
+			mode = MODE2;
+			EEPROM.update(MLOC, mode);
+			if(DEBUG){ Serial.print("mode = "); Serial.println(mode, HEX);}
+		break;
 	  
-	  case MODE3:
-		mode = MODE3;
-		EEPROM.update(MLOC, mode);
-		if(DEBUG){ Serial.print("mode = "); Serial.println(mode, HEX);}
-	  break;
+		case MODE3:
+			mode = MODE3;
+			EEPROM.update(MLOC, mode);
+			if(DEBUG){ Serial.print("mode = "); Serial.println(mode, HEX);}
+		break;
 	  
-	  case MODE4:
-		mode = MODE4;
-		EEPROM.update(MLOC, mode);
-		if(DEBUG){ Serial.print("mode = "); Serial.println(mode, HEX);}
-	  break;
+		case MODE4:
+			mode = MODE4;
+			EEPROM.update(MLOC, mode);
+			if(DEBUG){ Serial.print("mode = "); Serial.println(mode, HEX);}
+		break;
 	  
-	  default:
-		mode = EEPROM.read(MLOC);
-		if(DEBUG){ Serial.print("mode = "); Serial.println(mode, HEX);}
-	  break;
-  }	    
+		default:
+			mode = EEPROM.read(MLOC);
+			if(DEBUG){ Serial.print("mode = "); Serial.println(mode, HEX);}
+		break;
+	}	    
 }
 
-void loop() {
-  for(int i = 0; i < 4; i++){
-    // read rotary encoders
-    volatile unsigned char result = encoder[i].process();
-    if (result == DIR_CW && counter[i] < 127) {
-      counter[i]++;
-      if(DEBUG) printEncoder(i, counter[i]);
-    } else if (result == DIR_CCW && counter[i] >0) {
-      counter[i]--;
-      printEncoder(i, counter[i]);
-    }
+/*void loop() {
+	for(int i = 0; i < 4; i++){
+		// read rotary encoders
+		volatile unsigned char result = encoder[i].process();
+		if (result == DIR_CW && counter[i] < 127) {
+			counter[i]++;
+			if(DEBUG) printEncoder(i, counter[i]);
+		} else if (result == DIR_CCW && counter[i] >0) {
+			counter[i]--;
+			printEncoder(i, counter[i]);
+		}
 	
-    // read rotary buttons
-    buttons[i] = 1 - (analogRead(inputs[i])>>9); //read current button state
-    if(buttons[i] != _buttons[i]){
-      _buttons[i] = buttons[i];
-      if(DEBUG) printButton(i, buttons[i]);
-    }
-  }
+		// read rotary buttons
+		buttons[i] = 1 - (analogRead(inputs[i])>>9); //read current button state
+		if(buttons[i] != _buttons[i]){
+			_buttons[i] = buttons[i];
+			if(DEBUG) printButton(i, buttons[i]);
+		}
+	}
+}*/
+
+void loop(){
+	switch(mode){
+		case(MODE2): 
+			for(int i = 0; i < 4; i++){
+				// READ ENCODER BUTTONS
+				buttons[i] = 1 - (analogRead(inputs[i])>>9); //read current button state
+				if(buttons[i] != _buttons[i]){
+					_buttons[i] = buttons[i];
+					if(DEBUG) printButton(i, buttons[i]);
+				}
+			
+				// READ ENCODERS (short ifelse  (condition) ? true : false)
+				volatile unsigned char result = encoder[i].process();
+				if (result == DIR_CW && counter[i] < 127) {				// CLOCKWISE
+					(buttons[i]) ? counter[i]+=M2_INC : counter[i]++;		//increment
+					if(counter[i] > 127) counter[i] = 127;				// prevent out of bounds
+					if(DEBUG) printEncoder(i, counter[i]);				// debug
+				
+					} else if (result == DIR_CCW && counter[i] >0) {		// COUNTER CLOCKWISE
+					(buttons[i]) ? counter[i]-=M2_INC : counter[i]--;		//decrement
+					if(counter[i] > 127) counter[i] = 0;				// prevent out of bounds
+					printEncoder(i, counter[i]);						// debug
+				}
+			
+				// prepare message to send through I2C
+				message[0] = MADDR + (i << MADDRSIZE);
+				message[1] = counter[i];
+				// send I2C message
+				Wire.beginTransmission(BRAIN);
+				Wire.write(message, NUMBYTES);
+				Wire.endTransmission();
+			
+			}
+		break;
+		
+		default: // MODE1 (in default in case something wrong happens with the mode variable
+			for(int i = 0; i < 4; i++){
+				// READ ENCODER BUTTONS
+				buttons[i] = 1 - (analogRead(inputs[i])>>9); //read current button state
+				if(buttons[i] != _buttons[i]){
+					_buttons[i] = buttons[i];
+					if(DEBUG) printButton(i, buttons[i]);
+				}
+				
+				// READ ENCODERS (short ifelse  (condition) ? true : false)
+				volatile unsigned char result = encoder[i].process();
+				if (result == DIR_CW && counter[i] < 127) {				// CLOCKWISE
+					(buttons[i]) ? counter[i]+=M1_INC : counter[i]++;		//increment
+					if(counter[i] > 127) counter[i] = 127;				// prevent out of bounds
+					if(DEBUG) printEncoder(i, counter[i]);				// debug
+				
+				} else if (result == DIR_CCW && counter[i] >0) {		// COUNTER CLOCKWISE
+					(buttons[i]) ? counter[i]-=M1_INC : counter[i]--;		//decrement
+					if(counter[i] > 127) counter[i] = 0;				// prevent out of bounds
+					printEncoder(i, counter[i]);						// debug
+				}
+				
+				// prepare message to send through I2C
+				message[0] = MADDR + (i << MADDRSIZE);
+				message[1] = counter[i];
+				// send I2C message
+				Wire.beginTransmission(BRAIN);
+				Wire.write(message, NUMBYTES);
+				Wire.endTransmission();
+			
+			}
+		break; 
+	}
 }
 
 void printEncoder(int j, byte c){
-  Serial.print("enc"); 
-  Serial.print(j+1);
-  Serial.print(": "); 
-  Serial.println(c);
+	Serial.print("enc"); 
+	Serial.print(j+1);
+	Serial.print(": "); 
+	Serial.println(c);
 }
 void printButton(int j, byte c){
-  Serial.print("button"); 
-  Serial.print(j+1);
-  Serial.print(": "); 
-  Serial.println(c);
+	Serial.print("button");
+	Serial.print(j+1);
+	Serial.print(": ");
+	Serial.println(c);
 }
