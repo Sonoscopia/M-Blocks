@@ -18,6 +18,7 @@
 #include "GLOBALS.h"
 
 //Beginning of Auto generated function prototypes by Atmel Studio
+void sendMessage(byte addr, byte value, int ctrl_id); // I2C message output
 void printEncoder(int j, byte c);
 void printButton(int j, byte c);
 //End of Auto generated function prototypes by Atmel Studio
@@ -39,8 +40,7 @@ Rotary encoder[4] = {
 volatile byte counter[4] = {0, 0, 0, 0}; // encoders' values
 byte buttons[4] = {0, 0, 0, 0}; // encoders' button press
 byte _buttons[4] = {0, 0, 0, 0};
-byte toggles[4] = {0, 0, 0, 0}; // exclusive of mode3 (toggles value between 0 and 127)
-byte _toggles[4] = {0, 0, 0, 0}; 
+byte toggles[4] = {0, 0, 0, 0}; // exclusive to MODE3 (toggles value between 0 and 127)
 
 
 byte mode;
@@ -112,7 +112,34 @@ void setup() {
 
 void loop(){
 	switch(mode){
-		case(MODE2): 
+		case(MODE3): // pressing the encoder button toggles the value from 
+			for(int i = 0; i < 4; i++){
+				// READ ENCODER BUTTONS
+				buttons[i] = 1 - (analogRead(inputs[i])>>9); //read current button state
+				if(buttons[i] != _buttons[i]){
+					_buttons[i] = buttons[i];
+					if(buttons[i]>0){
+						toggles[i] = !toggles[i];
+						counter[i] = toggles[i] * 127;
+						if(DEBUG) printEncoder(i, counter[i]);
+						sendMessage(MADDR, counter[i], i);						// SEND I2C MESSAGE
+					} 
+				}
+				// READ ENCODERS
+				volatile unsigned char result = encoder[i].process();
+				if (result == DIR_CW && counter[i] < 127) {
+					counter[i]++;
+					if(DEBUG) printEncoder(i, counter[i]);
+					sendMessage(MADDR, counter[i], i);						// SEND I2C MESSAGE
+				} else if (result == DIR_CCW && counter[i] >0) {
+					counter[i]--;
+					printEncoder(i, counter[i]);
+					sendMessage(MADDR, counter[i], i);						// SEND I2C MESSAGE
+				}
+			}
+		break;
+		
+		case(MODE2): // the only difference from MODE1 is the increment value (M2_INC instead of M1_INC)
 			for(int i = 0; i < 4; i++){
 				// READ ENCODER BUTTONS
 				buttons[i] = 1 - (analogRead(inputs[i])>>9); //read current button state
@@ -123,25 +150,18 @@ void loop(){
 			
 				// READ ENCODERS (short ifelse  (condition) ? true : false)
 				volatile unsigned char result = encoder[i].process();
-				if (result == DIR_CW && counter[i] < 127) {				// CLOCKWISE
-					(buttons[i]) ? counter[i]+=M2_INC : counter[i]++;		//increment
-					if(counter[i] > 127) counter[i] = 127;				// prevent out of bounds
-					if(DEBUG) printEncoder(i, counter[i]);				// debug
+				if (result == DIR_CW && counter[i] < 127) {					// CLOCKWISE
+					(buttons[i]) ? counter[i]+=M2_INC : counter[i]++;		// increment
+					if(counter[i] > 127) counter[i] = 127;					// prevent out of bounds
+					if(DEBUG) printEncoder(i, counter[i]);					// debug
+					sendMessage(MADDR, counter[i], i);						// SEND I2C MESSAGE
 				
-					} else if (result == DIR_CCW && counter[i] >0) {		// COUNTER CLOCKWISE
+				} else if (result == DIR_CCW && counter[i] >0) {		// COUNTER CLOCKWISE
 					(buttons[i]) ? counter[i]-=M2_INC : counter[i]--;		//decrement
-					if(counter[i] > 127) counter[i] = 0;				// prevent out of bounds
-					printEncoder(i, counter[i]);						// debug
+					if(counter[i] > 127) counter[i] = 0;					// prevent out of bounds
+					if(DEBUG) printEncoder(i, counter[i]);					// debug
+					sendMessage(MADDR, counter[i], i);						// SEND I2C MESSAGE
 				}
-			
-				// prepare message to send through I2C
-				message[0] = MADDR + (i << MADDRSIZE);
-				message[1] = counter[i];
-				// send I2C message
-				Wire.beginTransmission(BRAIN);
-				Wire.write(message, NUMBYTES);
-				Wire.endTransmission();
-			
 			}
 		break;
 		
@@ -156,30 +176,33 @@ void loop(){
 				
 				// READ ENCODERS (short ifelse  (condition) ? true : false)
 				volatile unsigned char result = encoder[i].process();
-				if (result == DIR_CW && counter[i] < 127) {				// CLOCKWISE
+				if (result == DIR_CW && counter[i] < 127) {					// CLOCKWISE
 					(buttons[i]) ? counter[i]+=M1_INC : counter[i]++;		//increment
-					if(counter[i] > 127) counter[i] = 127;				// prevent out of bounds
-					if(DEBUG) printEncoder(i, counter[i]);				// debug
+					if(counter[i] > 127) counter[i] = 127;					// prevent out of bounds
+					if(DEBUG) printEncoder(i, counter[i]);					// debug
+					sendMessage(MADDR, counter[i], i);						// SEND I2C MESSAGE
 				
-				} else if (result == DIR_CCW && counter[i] >0) {		// COUNTER CLOCKWISE
+				} else if (result == DIR_CCW && counter[i] >0) {			// COUNTER CLOCKWISE
 					(buttons[i]) ? counter[i]-=M1_INC : counter[i]--;		//decrement
-					if(counter[i] > 127) counter[i] = 0;				// prevent out of bounds
-					printEncoder(i, counter[i]);						// debug
+					if(counter[i] > 127) counter[i] = 0;					// prevent out of bounds
+					printEncoder(i, counter[i]);							// debug
+					sendMessage(MADDR, counter[i], i);						// SEND I2C MESSAGE
 				}
-				
-				// prepare message to send through I2C
-				message[0] = MADDR + (i << MADDRSIZE);
-				message[1] = counter[i];
-				// send I2C message
-				Wire.beginTransmission(BRAIN);
-				Wire.write(message, NUMBYTES);
-				Wire.endTransmission();
-			
 			}
 		break; 
 	}
 }
 
+// Send I2C message
+void sendMessage(byte addr, byte value, int ctrl_id){
+	// prepare message to send through I2C
+	message[0] = addr + (ctrl_id << MADDRSIZE);
+	message[1] = value;
+	// send I2C message
+	Wire.beginTransmission(BRAIN);
+	Wire.write(message, NUMBYTES);
+	Wire.endTransmission();
+}
 void printEncoder(int j, byte c){
 	Serial.print("enc"); 
 	Serial.print(j+1);

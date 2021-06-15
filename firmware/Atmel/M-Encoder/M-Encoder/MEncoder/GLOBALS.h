@@ -9,7 +9,8 @@
 #ifndef GLOBALS_H_
 #define GLOBALS_H_
 
-#define MADDR 5 // M-Controller address
+#define MADDR 5 // M-Controller address (used for control change behaviour/modes1..3)
+#define MADDR_N 6 // M-Controller address (used for note behaviour/mode4)
 #define MADDRSIZE 5 // addres size in bits (5-bits: 0 to 31)
 #define BRAIN 8 // Slave Receiver address (M-Brain)
 #define NUMBYTES 2 // number of bytes using in communication from M-Controllers to M-Brain
