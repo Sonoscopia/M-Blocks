@@ -9,6 +9,12 @@ The communication between modules is made using I2C (Inter-Integrated Circuit) u
 
 ## CHANGELOG
 
+### version 0.1.2 (phobosfeijoada)
+Fully functional M-Brain prototype and M-Controllers.
+Continuous controls (ex: knobs) can now output notes, [see commit](https://github.com/Sonoscopia/M-Blocks/commit/bef133f0ddcc1b52bf48fc73a7da5345fef3f352).
+M-Toggle code was modified to (MToggleAsButton) acting as M-Button to work with Phobos.
+There are still some bugs when programming M-Brain but it works as long as one follows the manual and pays attention to the LED's.
+
 ### version 0.1.1 (francesinha)
 Fully functional M-Brain prototype and M-Controllers. Needs testing...
 
