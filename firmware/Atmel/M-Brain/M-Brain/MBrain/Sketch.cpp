@@ -345,7 +345,10 @@ void receiveI2C(int howmany){
 			
 		if (notemap[message[0]] < 128) // if there's a notemap stored
 		{
-			if(message[1] > 0) MIDI.sendNoteOn(notemap[message[0]], velmap[message[0]], ch);
+			if(message[1] > 0){
+				 if(message[1]<= velmap[message[0]]) MIDI.sendNoteOn(notemap[message[0]], message[1], ch); // if velocity is lower than set maximum velocity, send received velocity
+				 else MIDI.sendNoteOn(notemap[message[0]], velmap[message[0]], ch); // else, send set maximum velocity (default = 127) 
+			}
 			else MIDI.sendNoteOff(notemap[message[0]], 0, ch);
 		}
 			
