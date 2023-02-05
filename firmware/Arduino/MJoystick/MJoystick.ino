@@ -19,7 +19,7 @@
 // => try replacing the potentiometers...
 
 
-char inputs[2] = {A0, A1}; // BUTTON PINS 
+char inputs[2] = {A1, A0}; // BUTTON PINS 
 float potstate[2] = {0, 0}; // current smoothed value; using floats because of the exponential filter
 float _potstate[2] = {0, 0}; // last smoothed value; using floats because of the exponential filter
 boolean changed = false; // used to check if toggles have changed 
@@ -28,14 +28,14 @@ byte message[2] = {addr, potstate[0]};
 
 void setup() {
   Wire.begin();// join i2c bus (address optional for master)
-  if(DEBUG) Serial.begin(115200);
+  if(DEBUG) Serial.begin(9600);
   pinMode(LED_BUILTIN, OUTPUT); // use built-in led to check for ADC flickers
   digitalWrite(LED_BUILTIN, LOW); 
   
   // update values upon startup
-  potstate[0] = analogRead(A0)>>3;
+  potstate[0] = analogRead(inputs[0])>>3;
   _potstate[0] = potstate[0];
-  potstate[1] = analogRead(A1)>>3;
+  potstate[1] = analogRead(inputs[1])>>3;
   _potstate[1] = potstate[1];
 
 }
