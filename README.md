@@ -7,6 +7,10 @@ It consists of several MIDI controllers (M-Controllers) that can be patched to a
 The M-Brain than receives data from all the controllers via and maps them to MIDI messages sent to the output, either through USB (future implementation) or MIDI DIN connections.
 The communication between modules is made using I2C (Inter-Integrated Circuit) using the Arduino platform (www.arduino.cc).  
 
+### Note to programmers
+When programming an M-Brain for the first time do not forget to set the EEPROM memory using /utilities/EEPROM_Preset_Clear/
+
+
 ## CHANGELOG
 
 ### version 0.1.2 (phobosfeijoada)

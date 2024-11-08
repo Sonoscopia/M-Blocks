@@ -4,8 +4,9 @@
 /*End of auto generated code by Atmel studio */
 
 /* 
- *	Version: 0.1.2 (protobrain)
+ *	Version: 0.1.2 (phobosfeijoada)
  *	Created: 12-11-2020
+ *  Last checked: 08-11-2024
  *  Author: Tiago Ângelo (aka p1nh0)
 */
 
@@ -19,6 +20,8 @@
  *  buttons are connected to PORTC
  *  leds are connected to analog inputs A0 to A6 (PORTF)
 */
+
+// NOTE: When programming an M-Brain for the first time do not forget to set the EEPROM memory using /utilities/EEPROM_Preset_Clear/
 
 #pragma GCC push_options
 #pragma GCC optimize (OPTIMIZATION)
