@@ -3,10 +3,10 @@
 Versão em exibição permanente na Sonoscopia
 
 ### M-Joystick => mudar o código p/ enviar 4 CC's em vez de 2 [EnsembleOne hub-A]
-1 - taça1 [0]
-2 - taça2 [1]
-3 - taça3 [2]
-4 - taça4 [3]
+* 1 - taça1 = 0
+* 2 - taça2 = 1
+* 3 - taça3 = 2
+* 4 - taça4 = 3
 
 ### M-Toggle => mudar o código p/ funcionar como o M-Button mas c/ luz na mesma [EnsembleFour hub-C]
 1 - USA wblock [39]
